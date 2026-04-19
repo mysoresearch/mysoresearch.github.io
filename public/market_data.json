@@ -1,0 +1,415 @@
+{
+  "updated_at": "2026-04-19 01:41 UTC",
+  "winners": [
+    {
+      "ticker": "SMR",
+      "close": 12.65,
+      "change": 10.87,
+      "volume": 66888000,
+      "name": "NuScale Power",
+      "sector": "Energy"
+    },
+    {
+      "ticker": "SOXL",
+      "close": 94.68,
+      "change": 7.14,
+      "volume": 66561600,
+      "name": "SOXL ETF (Semis)",
+      "sector": "AI"
+    },
+    {
+      "ticker": "NTLA",
+      "close": 14.95,
+      "change": 5.58,
+      "volume": 3092500,
+      "name": "Intellia Therapeutics",
+      "sector": "Biosciences"
+    },
+    {
+      "ticker": "CRSP",
+      "close": 57.99,
+      "change": 4.07,
+      "volume": 1800400,
+      "name": "CRISPR Therapeutics",
+      "sector": "Biosciences"
+    },
+    {
+      "ticker": "OKLO",
+      "close": 66.81,
+      "change": 4.05,
+      "volume": 24287800,
+      "name": "Oklo",
+      "sector": "Energy"
+    }
+  ],
+  "losers": [
+    {
+      "ticker": "MRNA",
+      "close": 53.72,
+      "change": -1.76,
+      "volume": 13578600,
+      "name": "Moderna",
+      "sector": "Biosciences"
+    },
+    {
+      "ticker": "UEC",
+      "close": 14.97,
+      "change": -1.25,
+      "volume": 10632500,
+      "name": "Uranium Energy",
+      "sector": "Energy"
+    },
+    {
+      "ticker": "VST",
+      "close": 163.46,
+      "change": -1.25,
+      "volume": 4102100,
+      "name": "Vistra",
+      "sector": "Energy"
+    },
+    {
+      "ticker": "CEG",
+      "close": 296.21,
+      "change": -0.98,
+      "volume": 2264900,
+      "name": "Constellation Energy",
+      "sector": "Energy"
+    },
+    {
+      "ticker": "AMD",
+      "close": 278.39,
+      "change": 0.05,
+      "volume": 35441000,
+      "name": "AMD",
+      "sector": "AI"
+    }
+  ],
+  "sectors": {
+    "Energy": [
+      {
+        "ticker": "SMR",
+        "close": 12.65,
+        "change": 10.87,
+        "volume": 66888000,
+        "name": "NuScale Power",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "OKLO",
+        "close": 66.81,
+        "change": 4.05,
+        "volume": 24287800,
+        "name": "Oklo",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "URA",
+        "close": 55.86,
+        "change": 1.07,
+        "volume": 7873500,
+        "name": "URA ETF (Uranium)",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "NLR",
+        "close": 145.96,
+        "change": 0.35,
+        "volume": 563900,
+        "name": "NLR ETF (Nuclear)",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "CCJ",
+        "close": 120.66,
+        "change": 0.32,
+        "volume": 4219700,
+        "name": "Cameco",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "CEG",
+        "close": 296.21,
+        "change": -0.98,
+        "volume": 2264900,
+        "name": "Constellation Energy",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "VST",
+        "close": 163.46,
+        "change": -1.25,
+        "volume": 4102100,
+        "name": "Vistra",
+        "sector": "Energy"
+      },
+      {
+        "ticker": "UEC",
+        "close": 14.97,
+        "change": -1.25,
+        "volume": 10632500,
+        "name": "Uranium Energy",
+        "sector": "Energy"
+      }
+    ],
+    "Biosciences": [
+      {
+        "ticker": "NTLA",
+        "close": 14.95,
+        "change": 5.58,
+        "volume": 3092500,
+        "name": "Intellia Therapeutics",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "CRSP",
+        "close": 57.99,
+        "change": 4.07,
+        "volume": 1800400,
+        "name": "CRISPR Therapeutics",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "LLY",
+        "close": 927.03,
+        "change": 2.55,
+        "volume": 3245500,
+        "name": "Eli Lilly",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "XBI",
+        "close": 138.67,
+        "change": 2.37,
+        "volume": 10211800,
+        "name": "XBI ETF (Biotech)",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "VRTX",
+        "close": 441.2,
+        "change": 1.27,
+        "volume": 1025200,
+        "name": "Vertex Pharma",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "BIIB",
+        "close": 177.35,
+        "change": 0.76,
+        "volume": 1239500,
+        "name": "Biogen",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "REGN",
+        "close": 750.57,
+        "change": 0.61,
+        "volume": 513000,
+        "name": "Regeneron",
+        "sector": "Biosciences"
+      },
+      {
+        "ticker": "MRNA",
+        "close": 53.72,
+        "change": -1.76,
+        "volume": 13578600,
+        "name": "Moderna",
+        "sector": "Biosciences"
+      }
+    ],
+    "AI": [
+      {
+        "ticker": "SOXL",
+        "close": 94.68,
+        "change": 7.14,
+        "volume": 66561600,
+        "name": "SOXL ETF (Semis)",
+        "sector": "AI"
+      },
+      {
+        "ticker": "IONQ",
+        "close": 46.09,
+        "change": 3.16,
+        "volume": 48741500,
+        "name": "IonQ (Quantum)",
+        "sector": "AI"
+      },
+      {
+        "ticker": "RGTI",
+        "close": 19.81,
+        "change": 1.85,
+        "volume": 40290100,
+        "name": "Rigetti (Quantum)",
+        "sector": "AI"
+      },
+      {
+        "ticker": "NVDA",
+        "close": 201.68,
+        "change": 1.68,
+        "volume": 159843200,
+        "name": "Nvidia",
+        "sector": "AI"
+      },
+      {
+        "ticker": "GOOGL",
+        "close": 341.68,
+        "change": 1.68,
+        "volume": 25519000,
+        "name": "Alphabet",
+        "sector": "AI"
+      },
+      {
+        "ticker": "MSFT",
+        "close": 422.79,
+        "change": 0.6,
+        "volume": 47812100,
+        "name": "Microsoft",
+        "sector": "AI"
+      },
+      {
+        "ticker": "SMCI",
+        "close": 28.56,
+        "change": 0.56,
+        "volume": 21834900,
+        "name": "Super Micro",
+        "sector": "AI"
+      },
+      {
+        "ticker": "AMD",
+        "close": 278.39,
+        "change": 0.05,
+        "volume": 35441000,
+        "name": "AMD",
+        "sector": "AI"
+      }
+    ]
+  },
+  "news": {
+    "Energy": [
+      {
+        "title": "Cameco's EBITDA Gains 26% in 2025: Is More Expansion Ahead?",
+        "url": "https://finance.yahoo.com/sectors/energy/articles/camecos-ebitda-gains-26-2025-133600456.html",
+        "publisher": "Zacks",
+        "published": "Apr 17, 2026",
+        "ticker": "CCJ",
+        "sector": "Energy"
+      },
+      {
+        "title": "Top Stock Picks of 2026: This Uranium Stock Is an Energy Winner",
+        "url": "https://finance.yahoo.com/sectors/energy/articles/top-stock-picks-2026-uranium-131849031.html",
+        "publisher": "Schaeffer's Investment Research",
+        "published": "Apr 17, 2026",
+        "ticker": "CCJ",
+        "sector": "Energy"
+      },
+      {
+        "title": "Assessing Cameco\u2019s Valuation As U.S. Space Nuclear Reactor Initiative Lifts Sector Sentiment",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/assessing-cameco-valuation-u-space-080521360.html",
+        "publisher": "Simply Wall St.",
+        "published": "Apr 17, 2026",
+        "ticker": "CCJ",
+        "sector": "Energy"
+      },
+      {
+        "title": "Nuclear stocks gain on White House space nuclear power initiative",
+        "url": "https://finance.yahoo.com/sectors/energy/articles/nuclear-stocks-gain-white-house-101548952.html",
+        "publisher": "Investing.com",
+        "published": "Apr 16, 2026",
+        "ticker": "CCJ",
+        "sector": "Energy"
+      },
+      {
+        "title": "Cameco (CCJ) Beats Stock Market Upswing: What Investors Need to Know",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/cameco-ccj-beats-stock-market-215004944.html",
+        "publisher": "Zacks",
+        "published": "Apr 15, 2026",
+        "ticker": "CCJ",
+        "sector": "Energy"
+      }
+    ],
+    "Biosciences": [
+      {
+        "title": "This Drug Stock Has Crushed the S&P 500 Over the Last Decade",
+        "url": "https://www.fool.com/investing/2026/04/18/this-drug-stock-has-crushed-the-sp-500-over-the-la/",
+        "publisher": "Motley Fool",
+        "published": "Apr 18, 2026",
+        "ticker": "LLY",
+        "sector": "Biosciences"
+      },
+      {
+        "title": "Foundayo Trial Results Recast Eli Lilly Story On GLP1 Safety And Growth",
+        "url": "https://finance.yahoo.com/sectors/healthcare/articles/foundayo-trial-results-recast-eli-130246654.html",
+        "publisher": "Simply Wall St.",
+        "published": "Apr 18, 2026",
+        "ticker": "LLY",
+        "sector": "Biosciences"
+      },
+      {
+        "title": "Better Long-Term Buy: Eli Lilly or Viking Therapeutics?",
+        "url": "https://www.fool.com/investing/2026/04/17/better-long-term-buy-ticker-or-ticker/",
+        "publisher": "Motley Fool",
+        "published": "Apr 17, 2026",
+        "ticker": "LLY",
+        "sector": "Biosciences"
+      },
+      {
+        "title": "Eli Lilly's Pill Lags Novo Nordisk's In First Week. Why Stock Rallied.",
+        "url": "https://www.investors.com/news/technology/eli-lilly-foundayo-launch-weight-loss-pill-oral-wegovy/?src=A00220&yptr=yahoo",
+        "publisher": "Investor's Business Daily",
+        "published": "Apr 17, 2026",
+        "ticker": "LLY",
+        "sector": "Biosciences"
+      },
+      {
+        "title": "Is This the Biggest Game-Changer in Lilly's 150-Year History?",
+        "url": "https://www.fool.com/investing/2026/04/17/is-this-the-biggest-game-changer-in-lillys-150-yea/",
+        "publisher": "Motley Fool",
+        "published": "Apr 17, 2026",
+        "ticker": "LLY",
+        "sector": "Biosciences"
+      }
+    ],
+    "AI": [
+      {
+        "title": "The Trade Desk Is Down 40% This Year. Here's Why I'm Not Buying (Yet).",
+        "url": "https://www.fool.com/investing/2026/04/18/the-trade-desk-is-down-40-this-year-heres-why-im-n/",
+        "publisher": "Motley Fool",
+        "published": "Apr 19, 2026",
+        "ticker": "NVDA",
+        "sector": "AI"
+      },
+      {
+        "title": "3 Defense Stocks to Buy in April",
+        "url": "https://www.fool.com/investing/2026/04/18/3-defense-stocks-to-buy-in-april/",
+        "publisher": "Motley Fool",
+        "published": "Apr 19, 2026",
+        "ticker": "NVDA",
+        "sector": "AI"
+      },
+      {
+        "title": "Billionaire Bill Ackman Is Planning to Invest $10 Billion in New Stocks This Summer. Here's Why He Thinks It's a Great Time to Buy.",
+        "url": "https://www.fool.com/investing/2026/04/18/bill-ackman-is-planning-to-invest-10-billion/",
+        "publisher": "Motley Fool",
+        "published": "Apr 19, 2026",
+        "ticker": "NVDA",
+        "sector": "AI"
+      },
+      {
+        "title": "Did Amazon Just Say Checkmate to Nvidia?",
+        "url": "https://www.fool.com/investing/2026/04/18/did-amazon-just-say-checkmate-to-nvidia/",
+        "publisher": "Motley Fool",
+        "published": "Apr 18, 2026",
+        "ticker": "NVDA",
+        "sector": "AI"
+      },
+      {
+        "title": "Everyone's Talking About the SpaceX IPO. Why I Think You Should Avoid It, and What to Buy Instead.",
+        "url": "https://www.fool.com/investing/2026/04/18/everyones-talking-about-the-spacex-ipo-why-i-think/",
+        "publisher": "Motley Fool",
+        "published": "Apr 18, 2026",
+        "ticker": "NVDA",
+        "sector": "AI"
+      }
+    ]
+  }
+}

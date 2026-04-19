@@ -159,7 +159,7 @@ def main():
         "news":       sector_news,
     }
 
-    with open("data/market_data.json", "w") as f:
+    with open("public/market_data.json", "w") as f:
         json.dump(output, f, indent=2)
 
     print(f"Done — {len(all_stocks)} stocks fetched.")
