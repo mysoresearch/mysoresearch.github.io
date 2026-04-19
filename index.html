@@ -82,24 +82,6 @@
       margin-bottom: 1rem;
     }
 
-    /* ── Winners / Losers ── */
-    .movers-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    @media (max-width: 560px) { .movers-grid { grid-template-columns: 1fr; } }
-
-    .movers-col h3 {
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .movers-col.winners h3 { color: var(--green); }
-    .movers-col.losers  h3 { color: var(--red); }
-
     .mover-row {
       display: flex;
       justify-content: space-between;
@@ -197,8 +179,7 @@
       line-height: 1.7;
     }
 
-    .updated { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; }
-    .loading  { font-size: 0.85rem; color: var(--muted); }
+    .loading { font-size: 0.85rem; color: var(--muted); }
 
     footer {
       text-align: center;
@@ -217,22 +198,12 @@
 </header>
 
 <nav>
-  <a href="#movers">Daily Movers</a>
   <a href="#sectors">By Sector</a>
   <a href="#news">News</a>
   <a href="#disclaimer">Disclaimer</a>
 </nav>
 
 <main>
-
-  <!-- Daily Movers -->
-  <section id="movers">
-    <h2>Daily Movers</h2>
-    <p class="updated" id="updated-at">Loading...</p>
-    <div class="movers-grid" id="movers-grid">
-      <p class="loading">Fetching data...</p>
-    </div>
-  </section>
 
   <!-- By Sector -->
   <section id="sectors">
@@ -285,19 +256,6 @@
     </div>`;
   }
 
-  function renderMovers(data) {
-    document.getElementById('updated-at').textContent = 'Updated: ' + data.updated_at;
-    document.getElementById('movers-grid').innerHTML = `
-      <div class="movers-col winners">
-        <h3>Top Winners</h3>
-        ${data.winners.map(moverRow).join('')}
-      </div>
-      <div class="movers-col losers">
-        <h3>Top Losers</h3>
-        ${data.losers.map(moverRow).join('')}
-      </div>`;
-  }
-
   function renderSectorPanels(sectors) {
     const html = Object.entries(sectors).map(([name, stocks]) =>
       `<div class="spanel" data-sp="${name}">
@@ -342,9 +300,6 @@
     .then(r => r.json())
     .then(data => {
       marketData = data;
-      if (data.winners?.length)  renderMovers(data);
-      else document.getElementById('movers-grid').innerHTML =
-        '<p class="loading">Data not yet available — updates weekdays at 8 AM ET.</p>';
       if (data.sectors) renderSectorPanels(data.sectors);
       if (data.news)    renderNewsPanels(data.news);
     })
