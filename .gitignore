@@ -2,3 +2,5 @@ node_modules/
 .next/
 .env
 .env.local
+# keep data/market.db tracked (updated by GitHub Actions)
+

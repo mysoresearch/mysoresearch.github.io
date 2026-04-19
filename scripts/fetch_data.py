@@ -1,13 +1,15 @@
 """
-Fetches market data via yfinance and stores it in Upstash Redis.
+Fetches market data via yfinance and stores it in SQLite.
 Runs daily via GitHub Actions before US market open.
 """
 
+import sqlite3
 import json
-import os
 import datetime
-import requests
+import os
 import yfinance as yf
+
+DB_PATH = "data/market.db"
 
 SECTORS = {
     "Energy": {
@@ -39,7 +41,32 @@ SECTORS = {
 }
 
 
-def fetch_quote(ticker, name):
+def init_db(conn):
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS quotes (
+            ticker      TEXT NOT NULL,
+            name        TEXT,
+            sector      TEXT,
+            close       REAL,
+            change_pct  REAL,
+            volume      INTEGER,
+            updated_at  TEXT
+        );
+        CREATE TABLE IF NOT EXISTS news (
+            sector     TEXT,
+            ticker     TEXT,
+            title      TEXT,
+            url        TEXT UNIQUE,
+            publisher  TEXT,
+            published  TEXT,
+            thumbnail  TEXT,
+            updated_at TEXT
+        );
+    """)
+    conn.commit()
+
+
+def fetch_quote(ticker, name, sector, updated_at):
     try:
         hist = yf.Ticker(ticker).history(period="5d")
         if len(hist) < 2:
@@ -47,45 +74,37 @@ def fetch_quote(ticker, name):
         prev  = hist.iloc[-2]
         close = hist.iloc[-1]
         pct   = ((close["Close"] - prev["Close"]) / prev["Close"]) * 100
-        return {
-            "ticker": ticker,
-            "name":   name,
-            "close":  round(float(close["Close"]), 2),
-            "change": round(float(pct), 2),
-            "volume": int(close["Volume"]),
-        }
+        return (ticker, name, sector,
+                round(float(close["Close"]), 2),
+                round(float(pct), 2),
+                int(close["Volume"]),
+                updated_at)
     except Exception:
         return None
 
 
-def fetch_news(tickers, max_articles=9):
-    seen = set()
-    articles = []
+def fetch_news(tickers, sector, updated_at, max_articles=9):
+    seen, articles = set(), []
     for ticker in tickers:
         if len(articles) >= max_articles:
             break
         try:
-            raw = yf.Ticker(ticker).news or []
-            for item in raw:
+            for item in (yf.Ticker(ticker).news or []):
                 if len(articles) >= max_articles:
                     break
-                content = item.get("content", item)
-                url   = (content.get("canonicalUrl") or {}).get("url") or content.get("url", "")
-                title = content.get("title", "")
-                pub   = (content.get("provider") or {}).get("displayName") or content.get("publisher", "")
-                ts    = content.get("pubDate") or content.get("providerPublishTime")
+                c     = item.get("content", item)
+                url   = (c.get("canonicalUrl") or {}).get("url") or c.get("url", "")
+                title = c.get("title", "")
+                pub   = (c.get("provider") or {}).get("displayName") or c.get("publisher", "")
+                ts    = c.get("pubDate") or c.get("providerPublishTime")
                 thumb = ""
                 try:
-                    resolutions = content.get("thumbnail", {}).get("resolutions", [])
-                    if resolutions:
-                        thumb = resolutions[0].get("url", "")
+                    thumb = (c.get("thumbnail") or {}).get("resolutions", [{}])[0].get("url", "")
                 except Exception:
                     pass
-
                 if not url or not title or url in seen:
                     continue
                 seen.add(url)
-
                 if isinstance(ts, (int, float)):
                     published = datetime.datetime.utcfromtimestamp(ts).strftime("%b %d, %Y")
                 elif isinstance(ts, str):
@@ -95,53 +114,38 @@ def fetch_news(tickers, max_articles=9):
                         published = ts[:10]
                 else:
                     published = ""
-
-                articles.append({
-                    "title": title, "url": url, "publisher": pub,
-                    "published": published, "ticker": ticker, "thumbnail": thumb,
-                })
+                articles.append((sector, ticker, title, url, pub, published, thumb, updated_at))
         except Exception:
             continue
     return articles
 
 
-def push_to_upstash(data):
-    url   = os.environ["UPSTASH_REDIS_REST_URL"]
-    token = os.environ["UPSTASH_REDIS_REST_TOKEN"]
-    payload = json.dumps(data)
-    # SET with 28-hour expiry (covers weekends)
-    res = requests.post(
-        f"{url}/set/market_data/ex/100800",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        data=json.dumps(payload),
-    )
-    res.raise_for_status()
-    print(f"Upstash write: {res.json()}")
-
-
 def main():
-    sector_data = {}
-    news_data   = {}
+    os.makedirs("data", exist_ok=True)
+    conn       = sqlite3.connect(DB_PATH)
+    updated_at = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+
+    init_db(conn)
+    conn.execute("DELETE FROM quotes")
+    conn.execute("DELETE FROM news")
 
     for sector, cfg in SECTORS.items():
-        quotes = []
         for ticker in cfg["tickers"]:
-            q = fetch_quote(ticker, cfg["names"][ticker])
-            if q:
-                quotes.append(q)
-        quotes.sort(key=lambda x: x["change"], reverse=True)
-        sector_data[sector] = quotes
-        news_data[sector]   = fetch_news(cfg["news_tickers"])
-        print(f"{sector}: {len(quotes)} quotes, {len(news_data[sector])} articles")
+            row = fetch_quote(ticker, cfg["names"][ticker], sector, updated_at)
+            if row:
+                conn.execute("INSERT INTO quotes VALUES (?,?,?,?,?,?,?)", row)
+                print(f"  {ticker}: {row[4]:+.2f}%")
 
-    output = {
-        "updatedAt": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
-        "sectors":   sector_data,
-        "news":      news_data,
-    }
+        for row in fetch_news(cfg["news_tickers"], sector, updated_at):
+            try:
+                conn.execute("INSERT OR IGNORE INTO news VALUES (?,?,?,?,?,?,?,?)", row)
+            except Exception:
+                pass
+        print(f"{sector}: done")
 
-    push_to_upstash(output)
-    print("Done.")
+    conn.commit()
+    conn.close()
+    print(f"SQLite updated at {updated_at}")
 
 
 if __name__ == "__main__":

@@ -2,12 +2,15 @@ name: Daily Market Data Update
 
 on:
   schedule:
-    # 13:00 UTC = 8:00 AM EST / 9:00 AM EDT — before US market open (9:30 AM ET)
-    - cron: '0 13 * * 1-5'
+    # Every 30 min during US market hours Mon–Fri (13:30–21:00 UTC = 9:30 AM–5:00 PM ET)
+    - cron: '*/30 13-21 * * 1-5'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  fetch-and-store:
+  fetch-and-commit:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,10 +23,15 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance requests
+        run: pip install yfinance
 
-      - name: Fetch and push to Upstash
-        env:
-          UPSTASH_REDIS_REST_URL:   ${{ secrets.UPSTASH_REDIS_REST_URL }}
-          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+      - name: Fetch market data into SQLite
         run: python scripts/fetch_data.py
+
+      - name: Commit updated database
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/market.db
+          git diff --cached --quiet || git commit -m "chore: daily market data update $(date -u '+%Y-%m-%d')"
+          git push
