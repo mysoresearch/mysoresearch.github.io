@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const SECTORS = ['Energy', 'Biosciences', 'AI'];
 
@@ -17,8 +17,21 @@ const GRADIENTS = {
   AI:          'linear-gradient(135deg, #6e40c9, #9a6dd7)',
 };
 
-export default function Feed({ data }) {
-  const [active, setActive] = useState('All');
+export default function Feed() {
+  const [active, setActive]   = useState('All');
+  const [data, setData]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
+
+  useEffect(() => {
+    fetch('/api/market')
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(d => { setData(d); setLoading(false); })
+      .catch(e => { setError(e.message); setLoading(false); });
+  }, []);
 
   const visibleSectors = active === 'All' ? SECTORS : [active];
 
@@ -28,7 +41,9 @@ export default function Feed({ data }) {
       <header className="topbar">
         <h1 className="logo">mysoresearch</h1>
         <span className="topbar-sub">
-          US Emerging Trends · {data?.updatedAt ? `Updated ${new Date(data.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : 'Loading...'}
+          {data
+            ? `Updated ${new Date(data.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+            : 'US Emerging Trends'}
         </span>
       </header>
 
@@ -52,20 +67,26 @@ export default function Feed({ data }) {
 
       {/* Feed */}
       <main className="feed">
-        {!data ? (
+        {loading && (
           <p style={{ textAlign: 'center', color: '#8e8e8e', padding: '3rem' }}>
             Loading market data…
           </p>
-        ) : (
-          visibleSectors.map(sector => (
-            <SectorSection
-              key={sector}
-              sector={sector}
-              stocks={data.sectors?.[sector] ?? []}
-              articles={data.news?.[sector] ?? []}
-            />
-          ))
         )}
+
+        {error && (
+          <p style={{ textAlign: 'center', color: '#d93025', padding: '3rem' }}>
+            Failed to load data: {error}
+          </p>
+        )}
+
+        {data && visibleSectors.map(sector => (
+          <SectorSection
+            key={sector}
+            sector={sector}
+            stocks={data.sectors?.[sector] ?? []}
+            articles={data.news?.[sector] ?? []}
+          />
+        ))}
       </main>
 
       <p className="disclaimer">
@@ -83,14 +104,12 @@ function SectorSection({ sector, stocks, articles }) {
     <section className="sector-section">
       <p className="section-label">{sector}</p>
 
-      {/* Stock pills */}
       {stocks.length > 0 && (
         <div className="stocks-strip">
           {stocks.map(s => <StockPill key={s.ticker} stock={s} />)}
         </div>
       )}
 
-      {/* News grid */}
       {articles.length > 0 && (
         <div className="news-grid">
           {articles.map((a, i) => (
@@ -101,7 +120,7 @@ function SectorSection({ sector, stocks, articles }) {
 
       {stocks.length === 0 && articles.length === 0 && (
         <p style={{ color: '#8e8e8e', fontSize: '0.85rem', padding: '1rem 0' }}>
-          No data available yet.
+          No data available.
         </p>
       )}
     </section>
@@ -127,36 +146,23 @@ function StockPill({ stock }) {
 }
 
 function NewsCard({ article, sector }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
   return (
-    <a
-      className="news-card"
-      href={article.url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <a className="news-card" href={article.url} target="_blank" rel="noopener noreferrer">
       <div className="nc-image-wrap">
-        {article.thumbnail ? (
+        {article.thumbnail && !imgFailed ? (
           <img
             src={article.thumbnail}
             alt=""
             loading="lazy"
-            onError={e => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
+            onError={() => setImgFailed(true)}
           />
-        ) : null}
-        <div
-          className="nc-placeholder"
-          style={{
-            background: GRADIENTS[sector],
-            display: article.thumbnail ? 'none' : 'flex',
-          }}
-        >
-          <p>{article.title.slice(0, 70)}{article.title.length > 70 ? '…' : ''}</p>
-        </div>
-
-        {/* Hover overlay */}
+        ) : (
+          <div className="nc-placeholder" style={{ background: GRADIENTS[sector] }}>
+            <p>{article.title.slice(0, 70)}{article.title.length > 70 ? '…' : ''}</p>
+          </div>
+        )}
         <div className="nc-overlay">
           <div className="nc-overlay-text">
             <div className="nc-overlay-title">{article.title}</div>
