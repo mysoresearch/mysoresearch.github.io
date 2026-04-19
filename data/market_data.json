@@ -1,6 +1,15 @@
 {
-  "updated_at": "pending first run",
+  "updated_at": "2026-04-19 01:22 UTC",
   "winners": [],
   "losers": [],
-  "sectors": {}
+  "sectors": {
+    "Energy": [],
+    "Biosciences": [],
+    "AI": []
+  },
+  "news": {
+    "Energy": [],
+    "Biosciences": [],
+    "AI": []
+  }
 }

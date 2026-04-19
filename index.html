@@ -328,6 +328,77 @@
     .sector-mover-col.bio    h3 { color: var(--green); }
     .sector-mover-col.ai     h3 { color: var(--purple); }
 
+    /* ── News ── */
+    .news-tabs {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .news-tab {
+      padding: 0.35rem 0.9rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+      transition: all 0.18s;
+    }
+
+    .news-tab:hover               { color: var(--text); border-color: var(--muted); }
+    .news-tab.active              { background: var(--primary); border-color: var(--primary); color: #0d1117; }
+    .news-tab.active.energy-tab   { background: #f0a500; border-color: #f0a500; }
+    .news-tab.active.bio-tab      { background: var(--green); border-color: var(--green); }
+    .news-tab.active.ai-tab       { background: var(--purple); border-color: var(--purple); }
+
+    .news-panel { display: none; }
+    .news-panel.active { display: grid; gap: 0.65rem; }
+
+    .news-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      text-decoration: none;
+      transition: border-color 0.18s;
+    }
+
+    .news-card:hover { border-color: var(--primary); }
+
+    .news-card .news-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .news-card .news-meta {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .news-card .news-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .news-card .news-tag.energy { background: rgba(240,165,0,0.12);   color: #f0a500; }
+    .news-card .news-tag.bio    { background: rgba(63,185,80,0.12);   color: var(--green); }
+    .news-card .news-tag.ai     { background: rgba(188,140,255,0.12); color: var(--purple); }
+
+    .news-empty { font-size: 0.85rem; color: var(--muted); padding: 0.5rem 0; }
+
     /* ── Disclaimer ── */
     #disclaimer {
       border-color: rgba(248,81,73,0.3);
@@ -401,6 +472,7 @@
   <nav>
     <a href="#about">About</a>
     <a href="#movers">Daily Movers</a>
+    <a href="#news">News</a>
     <a href="#sectors">Sectors</a>
     <a href="#tracking">What We Track</a>
     <a href="#disclaimer">Disclaimer</a>
@@ -419,6 +491,19 @@
       </div>
 
       <div class="sector-movers-grid" id="sector-movers"></div>
+    </section>
+
+    <!-- News -->
+    <section id="news">
+      <h2>Latest News from Yahoo Finance</h2>
+      <div class="news-tabs" id="news-tabs">
+        <button class="news-tab active" data-sector="Energy" onclick="switchTab(this)">Energy</button>
+        <button class="news-tab" data-sector="Biosciences" onclick="switchTab(this)">Biosciences</button>
+        <button class="news-tab" data-sector="AI" onclick="switchTab(this)">AI</button>
+      </div>
+      <div id="news-panels">
+        <p class="news-empty">Loading news...</p>
+      </div>
     </section>
 
     <!-- About -->
@@ -574,6 +659,8 @@
   </footer>
 
   <script>
+    const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
+
     function chgClass(v) { return v >= 0 ? 'up' : 'down'; }
     function chgStr(v)   { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
 
@@ -591,38 +678,84 @@
         </div>`;
     }
 
-    const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
+    function newsCard(a) {
+      const cls = SECTOR_CLASS[a.sector] || '';
+      return `
+        <a class="news-card" href="${a.url}" target="_blank" rel="noopener noreferrer">
+          <span class="news-title">${a.title}</span>
+          <div class="news-meta">
+            <span class="news-tag ${cls}">${a.ticker}</span>
+            <span>${a.publisher}</span>
+            ${a.published ? `<span>${a.published}</span>` : ''}
+          </div>
+        </a>`;
+    }
+
+    let allNews = {};
+
+    function switchTab(btn) {
+      document.querySelectorAll('.news-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      const sector = btn.dataset.sector;
+      const cls    = SECTOR_CLASS[sector] || '';
+      btn.classList.add(cls + '-tab');
+      renderNewsPanel(sector);
+    }
+
+    function renderNewsPanel(sector) {
+      const articles = allNews[sector] || [];
+      const panels   = document.getElementById('news-panels');
+      if (!articles.length) {
+        panels.innerHTML = '<p class="news-empty">No articles available yet.</p>';
+        return;
+      }
+      panels.innerHTML = `<div class="news-panel active">${articles.map(newsCard).join('')}</div>`;
+    }
 
     fetch('data/market_data.json')
       .then(r => r.json())
       .then(data => {
-        // Update timestamp
+        // Timestamp
         document.getElementById('updated-at').textContent =
           'Last updated: ' + data.updated_at + ' (previous trading day close)';
 
         // Winners / Losers
-        document.getElementById('winners-losers').innerHTML = `
-          <div class="movers-col winners">
-            <h3>Top Winners</h3>
-            ${data.winners.map(moverRow).join('')}
-          </div>
-          <div class="movers-col losers">
-            <h3>Top Losers</h3>
-            ${data.losers.map(moverRow).join('')}
-          </div>`;
+        if (data.winners && data.winners.length) {
+          document.getElementById('winners-losers').innerHTML = `
+            <div class="movers-col winners">
+              <h3>Top Winners</h3>
+              ${data.winners.map(moverRow).join('')}
+            </div>
+            <div class="movers-col losers">
+              <h3>Top Losers</h3>
+              ${data.losers.map(moverRow).join('')}
+            </div>`;
+        } else {
+          document.getElementById('winners-losers').innerHTML =
+            '<p style="color:var(--muted);font-size:.85rem">Market data not yet available — updated each weekday at 8 AM ET.</p>';
+        }
 
         // Per-sector breakdowns
-        const sectorHTML = Object.entries(data.sectors).map(([name, stocks]) => `
-          <div class="sector-mover-col ${SECTOR_CLASS[name] || ''}">
-            <h3>${name}</h3>
-            ${stocks.map(moverRow).join('')}
-          </div>`).join('');
-        document.getElementById('sector-movers').innerHTML = sectorHTML;
+        if (data.sectors && Object.keys(data.sectors).length) {
+          document.getElementById('sector-movers').innerHTML =
+            Object.entries(data.sectors).map(([name, stocks]) => `
+              <div class="sector-mover-col ${SECTOR_CLASS[name] || ''}">
+                <h3>${name}</h3>
+                ${stocks.map(moverRow).join('')}
+              </div>`).join('');
+        }
+
+        // News
+        allNews = data.news || {};
+        const activeTab = document.querySelector('.news-tab.active');
+        if (activeTab) renderNewsPanel(activeTab.dataset.sector);
       })
       .catch(() => {
         document.getElementById('updated-at').textContent =
           'Market data not yet available — updated each weekday at 8 AM ET.';
         document.getElementById('winners-losers').innerHTML = '';
+        document.getElementById('news-panels').innerHTML =
+          '<p class="news-empty">News unavailable.</p>';
       });
   </script>
 
