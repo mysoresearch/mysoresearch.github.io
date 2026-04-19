@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mysoresearch — Financial Technical Analysis</title>
+  <title>Mysoresearch — US Emerging Market Trends</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0d1117;
-      --surface:  #161b22;
-      --border:   #21262d;
-      --primary:  #58a6ff;
-      --green:    #3fb950;
-      --red:      #f85149;
-      --gold:     #d29922;
-      --text:     #e6edf3;
-      --muted:    #8b949e;
-      --subtle:   #30363d;
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --border:  #21262d;
+      --primary: #58a6ff;
+      --green:   #3fb950;
+      --red:     #f85149;
+      --gold:    #d29922;
+      --purple:  #bc8cff;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
     }
 
     body {
@@ -27,9 +27,9 @@
       line-height: 1.65;
     }
 
-    /* ── Header / Hero ── */
+    /* ── Header ── */
     header {
-      background: linear-gradient(160deg, #0d1117 0%, #161b22 60%, #0d1f33 100%);
+      background: linear-gradient(160deg, #0d1117 0%, #0d1f33 60%, #0d1117 100%);
       border-bottom: 1px solid var(--border);
       padding: 4rem 1.5rem 3rem;
       text-align: center;
@@ -41,29 +41,20 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 59px,
-        rgba(88,166,255,0.04) 60px
-      ),
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 39px,
-        rgba(88,166,255,0.04) 40px
-      );
+      background:
+        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(88,166,255,0.04) 60px),
+        repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(88,166,255,0.04) 40px);
       pointer-events: none;
     }
 
     .badge {
       display: inline-block;
-      background: rgba(88,166,255,0.12);
+      background: rgba(88,166,255,0.1);
       border: 1px solid rgba(88,166,255,0.3);
       color: var(--primary);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.3rem 0.9rem;
       border-radius: 20px;
@@ -74,16 +65,14 @@
       font-size: 2.8rem;
       font-weight: 800;
       letter-spacing: -1px;
-      color: var(--text);
+      color: var(--primary);
     }
-
-    header h1 span { color: var(--primary); }
 
     header p.tagline {
       margin-top: 0.8rem;
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--muted);
-      max-width: 540px;
+      max-width: 580px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -131,14 +120,14 @@
 
     /* ── Main ── */
     main {
-      max-width: 1000px;
+      max-width: 1020px;
       margin: 2.5rem auto;
       padding: 0 1.25rem;
       display: grid;
       gap: 1.75rem;
     }
 
-    /* ── Cards ── */
+    /* ── Section cards ── */
     section {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -147,84 +136,114 @@
     }
 
     section h2 {
-      font-size: 1.05rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      color: var(--primary);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
       margin-bottom: 1.25rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
     }
 
     /* ── About ── */
-    #about p { color: var(--muted); font-size: 0.97rem; }
+    #about p { color: var(--muted); font-size: 0.95rem; }
     #about p + p { margin-top: 0.75rem; }
 
-    /* ── Focus areas grid ── */
-    .focus-grid {
+    /* ── Sector cards — 3 columns ── */
+    .sector-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
     }
 
-    .focus-card {
+    @media (max-width: 700px) {
+      .sector-grid { grid-template-columns: 1fr; }
+    }
+
+    .sector-card {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 1.1rem 1.2rem;
-      transition: border-color 0.2s;
+      padding: 1.5rem 1.4rem;
+      transition: border-color 0.2s, transform 0.15s;
     }
 
-    .focus-card:hover { border-color: var(--primary); }
+    .sector-card:hover { transform: translateY(-3px); }
 
-    .focus-card .icon {
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
+    .sector-card.energy  { border-top: 3px solid #f0a500; }
+    .sector-card.bio     { border-top: 3px solid var(--green); }
+    .sector-card.ai      { border-top: 3px solid var(--purple); }
+
+    .sector-card .sector-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.65rem;
       display: block;
     }
 
-    .focus-card h3 {
-      font-size: 0.9rem;
+    .sector-card h3 {
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
     }
 
-    .focus-card p { font-size: 0.82rem; color: var(--muted); }
+    .sector-card p {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
 
-    /* ── Methods / two-column ── */
-    .two-col {
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.85rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .tag.energy { background: rgba(240,165,0,0.12);   color: #f0a500; }
+    .tag.bio    { background: rgba(63,185,80,0.12);   color: var(--green); }
+    .tag.ai     { background: rgba(188,140,255,0.12); color: var(--purple); }
+
+    /* ── What we track ── */
+    .track-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
     }
 
-    @media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) { .track-grid { grid-template-columns: 1fr; } }
 
-    .method-group h3 {
-      font-size: 0.82rem;
+    .track-col h3 {
+      font-size: 0.8rem;
       font-weight: 700;
-      color: var(--gold);
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.65rem;
     }
 
-    .method-group ul {
-      list-style: none;
-      display: grid;
-      gap: 0.4rem;
-    }
+    .track-col.energy h3 { color: #f0a500; }
+    .track-col.bio    h3 { color: var(--green); }
+    .track-col.ai     h3 { color: var(--purple); }
 
-    .method-group li {
-      font-size: 0.875rem;
+    .track-col ul { list-style: none; display: grid; gap: 0.45rem; }
+
+    .track-col li {
+      font-size: 0.86rem;
       color: var(--muted);
       padding-left: 1rem;
       position: relative;
     }
 
-    .method-group li::before {
+    .track-col li::before {
       content: '›';
       position: absolute;
       left: 0;
@@ -235,23 +254,20 @@
     /* ── Disclaimer ── */
     #disclaimer {
       border-color: rgba(248,81,73,0.3);
-      background: rgba(248,81,73,0.05);
+      background: rgba(248,81,73,0.04);
     }
 
     #disclaimer h2 { color: var(--red); }
-
-    #disclaimer p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.7;
-    }
+    #disclaimer p  { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
 
     /* ── Contact ── */
+    #contact p { color: var(--muted); font-size: 0.92rem; }
+
     .contact-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      margin-top: 0.75rem;
+      margin-top: 0.85rem;
     }
 
     .btn {
@@ -278,32 +294,37 @@
       color: var(--muted);
       border-top: 1px solid var(--border);
     }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 2rem; }
+      section { padding: 1.4rem 1.2rem; }
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="badge">Financial Technical Analysis</div>
-    <h1><span>Mysoresearch</span></h1>
+    <div class="badge">US Market · Emerging Trends Research</div>
+    <h1>Mysoresearch</h1>
     <p class="tagline">
-      Rigorous analysis of price action, market structure, and quantitative signals
-      across equities, futures, and crypto markets.
+      Tracking the frontier — Energy, Biosciences, and Artificial Intelligence
+      shaping the next decade of US market growth.
     </p>
   </header>
 
-  <!-- Static ticker for illustration -->
+  <!-- US Market Ticker -->
   <div class="ticker-bar">
-    <div class="ticker-item"><span class="sym">NIFTY 50</span><span class="val">22,147</span><span class="chg up">+0.82%</span></div>
-    <div class="ticker-item"><span class="sym">SENSEX</span><span class="val">73,088</span><span class="chg up">+0.74%</span></div>
-    <div class="ticker-item"><span class="sym">BANK NIFTY</span><span class="val">48,312</span><span class="chg down">-0.31%</span></div>
-    <div class="ticker-item"><span class="sym">GOLD</span><span class="val">71,420</span><span class="chg up">+0.55%</span></div>
-    <div class="ticker-item"><span class="sym">USD/INR</span><span class="val">84.21</span><span class="chg down">-0.12%</span></div>
+    <div class="ticker-item"><span class="sym">S&amp;P 500</span><span class="val">5,218</span><span class="chg up">+0.61%</span></div>
+    <div class="ticker-item"><span class="sym">NASDAQ</span><span class="val">16,340</span><span class="chg up">+0.89%</span></div>
+    <div class="ticker-item"><span class="sym">DOW</span><span class="val">38,904</span><span class="chg up">+0.32%</span></div>
+    <div class="ticker-item"><span class="sym">XBI (Biotech)</span><span class="val">94.12</span><span class="chg down">-0.44%</span></div>
+    <div class="ticker-item"><span class="sym">NLR (Nuclear)</span><span class="val">52.38</span><span class="chg up">+1.14%</span></div>
   </div>
 
   <nav>
     <a href="#about">About</a>
-    <a href="#focus">Focus Areas</a>
-    <a href="#methods">Methods</a>
+    <a href="#sectors">Sectors</a>
+    <a href="#tracking">What We Track</a>
     <a href="#disclaimer">Disclaimer</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -314,80 +335,118 @@
     <section id="about">
       <h2>About</h2>
       <p>
-        Mysoresearch is an independent platform dedicated to financial technical analysis.
-        We study price behaviour, volume dynamics, and market microstructure to develop
-        systematic, repeatable frameworks for understanding market cycles.
+        Mysoresearch is an independent platform tracking emerging trends across the US market.
+        We focus on three high-conviction themes — Energy, Biosciences, and Artificial Intelligence —
+        where technological breakthroughs are rapidly translating into capital flows and
+        structural market shifts.
       </p>
       <p>
-        Our work spans Indian equity markets (NSE/BSE), commodity futures, and global indices,
-        with a focus on actionable pattern recognition and indicator-driven research — not tips
-        or speculation.
+        Our analysis combines technical price action with catalyst-driven research: regulatory
+        decisions, scientific milestones, and institutional positioning that move sectors
+        before consensus catches up.
       </p>
     </section>
 
-    <!-- Focus Areas -->
-    <section id="focus">
-      <h2>Focus Areas</h2>
-      <div class="focus-grid">
-        <div class="focus-card">
-          <span class="icon">&#128200;</span>
-          <h3>Chart Pattern Analysis</h3>
-          <p>Classical and modern patterns: H&amp;S, triangles, flags, cup-and-handle.</p>
+    <!-- Sectors -->
+    <section id="sectors">
+      <h2>Sectors</h2>
+      <div class="sector-grid">
+
+        <div class="sector-card energy">
+          <span class="sector-icon">&#9762;</span>
+          <h3>Energy</h3>
+          <p>
+            Nuclear power (SMRs, uranium, fusion), next-gen grid infrastructure,
+            and the policy landscape reshaping US energy markets. Tracking pure-play
+            names and ETFs like NLR and URA.
+          </p>
+          <div class="tag-row">
+            <span class="tag energy">Nuclear</span>
+            <span class="tag energy">SMR</span>
+            <span class="tag energy">Uranium</span>
+            <span class="tag energy">Fusion</span>
+            <span class="tag energy">Grid Tech</span>
+          </div>
         </div>
-        <div class="focus-card">
-          <span class="icon">&#128202;</span>
-          <h3>Technical Indicators</h3>
-          <p>RSI, MACD, Bollinger Bands, ATR, Ichimoku, and custom oscillators.</p>
+
+        <div class="sector-card bio">
+          <span class="sector-icon">&#129516;</span>
+          <h3>Biosciences</h3>
+          <p>
+            Gene editing, CRISPR therapeutics, synthetic biology, pharmaceutical
+            pipelines, oncology, GLP-1, and medical devices. Tracking FDA catalysts,
+            clinical readouts, and ETFs like XBI and IBB.
+          </p>
+          <div class="tag-row">
+            <span class="tag bio">CRISPR</span>
+            <span class="tag bio">Gene Therapy</span>
+            <span class="tag bio">GLP-1</span>
+            <span class="tag bio">Oncology</span>
+            <span class="tag bio">FDA Pipeline</span>
+          </div>
         </div>
-        <div class="focus-card">
-          <span class="icon">&#127919;</span>
-          <h3>Price Action</h3>
-          <p>Candlestick structures, support/resistance, and order-flow analysis.</p>
+
+        <div class="sector-card ai">
+          <span class="sector-icon">&#129504;</span>
+          <h3>Artificial Intelligence</h3>
+          <p>
+            Large language models, AI infrastructure, quantum computing, semiconductor
+            supply chains, and enterprise AI adoption. Tracking GPU leaders, model
+            companies, and data center plays.
+          </p>
+          <div class="tag-row">
+            <span class="tag ai">LLMs</span>
+            <span class="tag ai">Quantum</span>
+            <span class="tag ai">Semiconductors</span>
+            <span class="tag ai">AI Infra</span>
+            <span class="tag ai">Data Centers</span>
+          </div>
         </div>
-        <div class="focus-card">
-          <span class="icon">&#128296;</span>
-          <h3>Quantitative Systems</h3>
-          <p>Backtested rule-based strategies with statistical performance metrics.</p>
-        </div>
-        <div class="focus-card">
-          <span class="icon">&#128736;</span>
-          <h3>Market Structure</h3>
-          <p>Higher highs/lows, trend identification, and market phase classification.</p>
-        </div>
-        <div class="focus-card">
-          <span class="icon">&#128737;</span>
-          <h3>Risk Management</h3>
-          <p>Position sizing models, drawdown analysis, and volatility-adjusted stops.</p>
-        </div>
+
       </div>
     </section>
 
-    <!-- Methods -->
-    <section id="methods">
-      <h2>Analytical Methods</h2>
-      <div class="two-col">
-        <div class="method-group">
-          <h3>Technical Tools</h3>
+    <!-- What We Track -->
+    <section id="tracking">
+      <h2>What We Track</h2>
+      <div class="track-grid">
+
+        <div class="track-col energy">
+          <h3>Energy</h3>
           <ul>
-            <li>Multi-timeframe trend analysis</li>
-            <li>Volume-price relationship (VPA)</li>
-            <li>Fibonacci retracements &amp; extensions</li>
-            <li>Elliott Wave framework</li>
-            <li>Pivot points &amp; market profile</li>
-            <li>Relative strength comparison</li>
+            <li>NRC &amp; DOE regulatory decisions</li>
+            <li>Uranium spot price &amp; contract trends</li>
+            <li>SMR project timelines &amp; funding</li>
+            <li>Fusion milestone announcements</li>
+            <li>Data center power demand growth</li>
+            <li>IRA policy impact on clean energy</li>
           </ul>
         </div>
-        <div class="method-group">
-          <h3>Quantitative Approach</h3>
+
+        <div class="track-col bio">
+          <h3>Biosciences</h3>
           <ul>
-            <li>Python-based backtesting</li>
-            <li>Walk-forward optimization</li>
-            <li>Sharpe, Sortino &amp; Calmar ratios</li>
-            <li>Monte Carlo simulation</li>
-            <li>Correlation &amp; sector rotation</li>
-            <li>Volatility regime detection</li>
+            <li>FDA PDUFA dates &amp; approval outcomes</li>
+            <li>Phase 2 / Phase 3 trial readouts</li>
+            <li>GLP-1 competitive landscape</li>
+            <li>Gene therapy IND filings</li>
+            <li>M&amp;A deals &amp; licensing agreements</li>
+            <li>Medicare drug pricing negotiations</li>
           </ul>
         </div>
+
+        <div class="track-col ai">
+          <h3>Artificial Intelligence</h3>
+          <ul>
+            <li>GPU supply &amp; NVIDIA earnings cycles</li>
+            <li>LLM benchmark &amp; capability releases</li>
+            <li>Quantum computing milestones</li>
+            <li>Enterprise AI adoption rates</li>
+            <li>US-China chip export controls</li>
+            <li>Data center capex from hyperscalers</li>
+          </ul>
+        </div>
+
       </div>
     </section>
 
@@ -395,22 +454,19 @@
     <section id="disclaimer">
       <h2>Disclaimer</h2>
       <p>
-        All content published on this site is strictly for <strong>educational and research
-        purposes</strong>. Nothing here constitutes financial advice, investment recommendations,
-        or solicitation of any kind. Past performance of any strategy or pattern does not
-        guarantee future results. Markets involve substantial risk of loss — always conduct
-        your own due diligence and consult a registered financial advisor before making
-        investment decisions. Mysoresearch is not SEBI-registered.
+        All content on Mysoresearch is for <strong>educational and informational purposes only</strong>.
+        Nothing published here constitutes financial advice, investment recommendations,
+        or a solicitation to buy or sell any security. Past trends do not guarantee
+        future performance. Investing in emerging technology sectors involves substantial
+        risk, including possible loss of principal. Always conduct your own due diligence
+        and consult a licensed financial advisor before making any investment decisions.
       </p>
     </section>
 
     <!-- Contact -->
     <section id="contact">
       <h2>Contact</h2>
-      <p style="color:var(--muted);font-size:0.92rem;">
-        Interested in collaborating on research, sharing chart ideas, or discussing
-        analytical frameworks? Reach out via GitHub or email.
-      </p>
+      <p>Have research ideas, sector insights, or want to collaborate? Reach out.</p>
       <div class="contact-row">
         <a class="btn btn-primary" href="https://github.com/mysoresearch" target="_blank" rel="noopener">
           &#128257; GitHub
@@ -424,8 +480,7 @@
   </main>
 
   <footer>
-    &copy; 2026 Mysoresearch &mdash; Independent Financial Technical Analysis &mdash;
-    For educational use only. Not investment advice.
+    &copy; 2026 Mysoresearch &mdash; US Emerging Trends Research &mdash; For educational use only. Not investment advice.
   </footer>
 
 </body>
