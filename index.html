@@ -251,6 +251,83 @@
       font-weight: 700;
     }
 
+    /* ── Daily Movers ── */
+    #movers .updated {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .movers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 600px) { .movers-grid { grid-template-columns: 1fr; } }
+
+    .movers-col h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.65rem;
+    }
+
+    .movers-col.winners h3 { color: var(--green); }
+    .movers-col.losers  h3 { color: var(--red); }
+
+    .mover-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 0.45rem;
+      font-size: 0.85rem;
+    }
+
+    .mover-left { display: flex; flex-direction: column; gap: 0.1rem; }
+    .mover-ticker { font-weight: 700; color: var(--text); font-family: 'Courier New', monospace; }
+    .mover-name   { font-size: 0.75rem; color: var(--muted); }
+    .mover-right  { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; }
+    .mover-price  { font-weight: 600; color: var(--text); font-family: 'Courier New', monospace; }
+    .mover-chg    { font-size: 0.8rem; font-weight: 700; font-family: 'Courier New', monospace; }
+    .mover-chg.up   { color: var(--green); }
+    .mover-chg.down { color: var(--red); }
+
+    .movers-loading {
+      color: var(--muted);
+      font-size: 0.875rem;
+      padding: 1rem 0;
+    }
+
+    /* ── Sector movers ── */
+    .sector-movers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 700px) { .sector-movers-grid { grid-template-columns: 1fr; } }
+
+    .sector-mover-col h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sector-mover-col.energy h3 { color: #f0a500; }
+    .sector-mover-col.bio    h3 { color: var(--green); }
+    .sector-mover-col.ai     h3 { color: var(--purple); }
+
     /* ── Disclaimer ── */
     #disclaimer {
       border-color: rgba(248,81,73,0.3);
@@ -323,6 +400,7 @@
 
   <nav>
     <a href="#about">About</a>
+    <a href="#movers">Daily Movers</a>
     <a href="#sectors">Sectors</a>
     <a href="#tracking">What We Track</a>
     <a href="#disclaimer">Disclaimer</a>
@@ -330,6 +408,18 @@
   </nav>
 
   <main>
+
+    <!-- Daily Movers -->
+    <section id="movers">
+      <h2>Daily Movers</h2>
+      <p class="updated" id="updated-at">Loading latest data...</p>
+
+      <div class="movers-grid" id="winners-losers">
+        <div class="movers-loading">Fetching market data...</div>
+      </div>
+
+      <div class="sector-movers-grid" id="sector-movers"></div>
+    </section>
 
     <!-- About -->
     <section id="about">
@@ -482,6 +572,59 @@
   <footer>
     &copy; 2026 Mysoresearch &mdash; US Emerging Trends Research &mdash; For educational use only. Not investment advice.
   </footer>
+
+  <script>
+    function chgClass(v) { return v >= 0 ? 'up' : 'down'; }
+    function chgStr(v)   { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+
+    function moverRow(s) {
+      return `
+        <div class="mover-row">
+          <div class="mover-left">
+            <span class="mover-ticker">${s.ticker}</span>
+            <span class="mover-name">${s.name}</span>
+          </div>
+          <div class="mover-right">
+            <span class="mover-price">$${s.close.toFixed(2)}</span>
+            <span class="mover-chg ${chgClass(s.change)}">${chgStr(s.change)}</span>
+          </div>
+        </div>`;
+    }
+
+    const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
+
+    fetch('data/market_data.json')
+      .then(r => r.json())
+      .then(data => {
+        // Update timestamp
+        document.getElementById('updated-at').textContent =
+          'Last updated: ' + data.updated_at + ' (previous trading day close)';
+
+        // Winners / Losers
+        document.getElementById('winners-losers').innerHTML = `
+          <div class="movers-col winners">
+            <h3>Top Winners</h3>
+            ${data.winners.map(moverRow).join('')}
+          </div>
+          <div class="movers-col losers">
+            <h3>Top Losers</h3>
+            ${data.losers.map(moverRow).join('')}
+          </div>`;
+
+        // Per-sector breakdowns
+        const sectorHTML = Object.entries(data.sectors).map(([name, stocks]) => `
+          <div class="sector-mover-col ${SECTOR_CLASS[name] || ''}">
+            <h3>${name}</h3>
+            ${stocks.map(moverRow).join('')}
+          </div>`).join('');
+        document.getElementById('sector-movers').innerHTML = sectorHTML;
+      })
+      .catch(() => {
+        document.getElementById('updated-at').textContent =
+          'Market data not yet available — updated each weekday at 8 AM ET.';
+        document.getElementById('winners-losers').innerHTML = '';
+      });
+  </script>
 
 </body>
 </html>
