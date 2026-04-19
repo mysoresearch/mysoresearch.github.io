@@ -13,7 +13,7 @@ export async function GET() {
     ).all();
 
     const articles = db.prepare(
-      'SELECT * FROM news ORDER BY sector'
+      'SELECT * FROM news ORDER BY published_ts DESC'
     ).all();
 
     const updatedAt = db.prepare(

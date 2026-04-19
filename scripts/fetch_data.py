@@ -6,6 +6,7 @@ Runs daily via GitHub Actions before US market open.
 import sqlite3
 import json
 import datetime
+import time
 import os
 import yfinance as yf
 
@@ -42,6 +43,12 @@ SECTORS = {
 
 
 def init_db(conn):
+    # Recreate news table if published_ts column is missing
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(news)").fetchall()}
+    if cols and "published_ts" not in cols:
+        conn.execute("DROP TABLE news")
+        conn.commit()
+
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS quotes (
             ticker      TEXT NOT NULL,
@@ -53,14 +60,15 @@ def init_db(conn):
             updated_at  TEXT
         );
         CREATE TABLE IF NOT EXISTS news (
-            sector     TEXT,
-            ticker     TEXT,
-            title      TEXT,
-            url        TEXT UNIQUE,
-            publisher  TEXT,
-            published  TEXT,
-            thumbnail  TEXT,
-            updated_at TEXT
+            sector       TEXT,
+            ticker       TEXT,
+            title        TEXT,
+            url          TEXT UNIQUE,
+            publisher    TEXT,
+            published    TEXT,
+            published_ts INTEGER,
+            thumbnail    TEXT,
+            updated_at   TEXT
         );
     """)
     conn.commit()
@@ -85,6 +93,7 @@ def fetch_quote(ticker, name, sector, updated_at):
 
 def fetch_news(tickers, sector, updated_at, max_articles=9):
     seen, articles = set(), []
+    cutoff_ts = time.time() - 7 * 24 * 3600  # skip articles older than 7 days
     for ticker in tickers:
         if len(articles) >= max_articles:
             break
@@ -104,17 +113,24 @@ def fetch_news(tickers, sector, updated_at, max_articles=9):
                     pass
                 if not url or not title or url in seen:
                     continue
-                seen.add(url)
+                # parse timestamp
+                ts_int = None
                 if isinstance(ts, (int, float)):
-                    published = datetime.datetime.utcfromtimestamp(ts).strftime("%b %d, %Y")
+                    ts_int = int(ts)
                 elif isinstance(ts, str):
                     try:
-                        published = datetime.datetime.fromisoformat(ts.replace("Z", "+00:00")).strftime("%b %d, %Y")
+                        ts_int = int(datetime.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp())
                     except Exception:
-                        published = ts[:10]
+                        pass
+                # skip articles older than 7 days
+                if ts_int and ts_int < cutoff_ts:
+                    continue
+                seen.add(url)
+                if ts_int:
+                    published = datetime.datetime.utcfromtimestamp(ts_int).strftime("%b %d, %Y")
                 else:
                     published = ""
-                articles.append((sector, ticker, title, url, pub, published, thumb, updated_at))
+                articles.append((sector, ticker, title, url, pub, published, ts_int, thumb, updated_at))
         except Exception:
             continue
     return articles
@@ -138,7 +154,7 @@ def main():
 
         for row in fetch_news(cfg["news_tickers"], sector, updated_at):
             try:
-                conn.execute("INSERT OR IGNORE INTO news VALUES (?,?,?,?,?,?,?,?)", row)
+                conn.execute("INSERT OR IGNORE INTO news VALUES (?,?,?,?,?,?,?,?,?)", row)
             except Exception:
                 pass
         print(f"{sector}: done")
