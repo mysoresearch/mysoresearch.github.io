@@ -2,8 +2,9 @@ name: Daily Market Data Update
 
 on:
   schedule:
-    # Every 30 min during US market hours Mon–Fri (13:30–21:00 UTC = 9:30 AM–5:00 PM ET)
-    - cron: '*/30 13-21 * * 1-5'
+    # Every hour, 1 PM–11 PM ET (18:00–04:00 UTC) — runs daily including weekends
+    - cron: '0 18-23 * * *'
+    - cron: '0 0-4 * * *'
   workflow_dispatch:
 
 permissions:
