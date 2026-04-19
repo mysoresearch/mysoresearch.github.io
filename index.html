@@ -3,209 +3,308 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mysore Research</title>
+  <title>Mysore Research — Financial Technical Analysis</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --primary: #2c5f8a;
-      --accent: #e07b39;
-      --bg: #f8f9fb;
-      --text: #1e2a38;
-      --muted: #6b7a8d;
-      --card-bg: #ffffff;
-      --border: #dde3ea;
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --border:   #21262d;
+      --primary:  #58a6ff;
+      --green:    #3fb950;
+      --red:      #f85149;
+      --gold:     #d29922;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --subtle:   #30363d;
     }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    /* ── Header ── */
+    /* ── Header / Hero ── */
     header {
-      background: var(--primary);
-      color: #fff;
-      padding: 3.5rem 1.5rem 2.5rem;
+      background: linear-gradient(160deg, #0d1117 0%, #161b22 60%, #0d1f33 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 1.5rem 3rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 59px,
+        rgba(88,166,255,0.04) 60px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 39px,
+        rgba(88,166,255,0.04) 40px
+      );
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(88,166,255,0.12);
+      border: 1px solid rgba(88,166,255,0.3);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
     }
 
     header h1 {
-      font-size: 2.6rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text);
     }
 
+    header h1 span { color: var(--primary); }
+
     header p.tagline {
-      margin-top: 0.75rem;
-      font-size: 1.1rem;
-      opacity: 0.85;
+      margin-top: 0.8rem;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
+    /* ── Ticker bar ── */
+    .ticker-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.55rem 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    .ticker-item { display: flex; gap: 0.5rem; align-items: center; }
+    .ticker-item .sym { color: var(--muted); }
+    .ticker-item .val { color: var(--text); font-weight: 600; }
+    .ticker-item .chg.up   { color: var(--green); }
+    .ticker-item .chg.down { color: var(--red); }
 
     /* ── Nav ── */
     nav {
-      background: #1e3f5c;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: center;
       gap: 0.25rem;
-      padding: 0.5rem 1rem;
+      padding: 0 1rem;
       flex-wrap: wrap;
     }
 
     nav a {
-      color: #c9dcea;
+      color: var(--muted);
       text-decoration: none;
-      padding: 0.4rem 1rem;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      transition: background 0.2s;
+      padding: 0.75rem 1.1rem;
+      font-size: 0.875rem;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
     }
 
-    nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    nav a:hover { color: var(--text); border-bottom-color: var(--primary); }
 
-    /* ── Main layout ── */
+    /* ── Main ── */
     main {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 2.5rem auto;
       padding: 0 1.25rem;
       display: grid;
-      gap: 2rem;
+      gap: 1.75rem;
     }
 
-    /* ── Section cards ── */
+    /* ── Cards ── */
     section {
-      background: var(--card-bg);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 2rem 2.25rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 1.75rem 2rem;
     }
 
     section h2 {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
+      font-weight: 700;
       color: var(--primary);
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-
-    section h2 .icon { font-size: 1.1rem; }
 
     /* ── About ── */
-    #about p { color: #3a4a5c; }
+    #about p { color: var(--muted); font-size: 0.97rem; }
+    #about p + p { margin-top: 0.75rem; }
 
-    /* ── Research areas ── */
-    .area-grid {
+    /* ── Focus areas grid ── */
+    .focus-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: 1rem;
-      margin-top: 0.25rem;
     }
 
-    .area-card {
+    .focus-card {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 1rem 1.1rem;
+      padding: 1.1rem 1.2rem;
+      transition: border-color 0.2s;
     }
 
-    .area-card h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--primary);
+    .focus-card:hover { border-color: var(--primary); }
+
+    .focus-card .icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .focus-card h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
       margin-bottom: 0.3rem;
     }
 
-    .area-card p {
+    .focus-card p { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Methods / two-column ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+
+    .method-group h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.6rem;
+    }
+
+    .method-group ul {
+      list-style: none;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .method-group li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .method-group li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* ── Disclaimer ── */
+    #disclaimer {
+      border-color: rgba(248,81,73,0.3);
+      background: rgba(248,81,73,0.05);
+    }
+
+    #disclaimer h2 { color: var(--red); }
+
+    #disclaimer p {
       font-size: 0.85rem;
       color: var(--muted);
+      line-height: 1.7;
     }
-
-    /* ── Projects ── */
-    .project-list { list-style: none; display: grid; gap: 0.75rem; }
-
-    .project-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      padding: 0.85rem 1rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-    }
-
-    .project-list .dot {
-      width: 10px; height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-      margin-top: 0.35rem;
-      flex-shrink: 0;
-    }
-
-    .project-list strong { font-size: 0.95rem; color: var(--text); }
-    .project-list p { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
 
     /* ── Contact ── */
-    .contact-links {
+    .contact-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
 
-    .contact-links a {
+    .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.55rem 1.1rem;
-      background: var(--primary);
-      color: #fff;
+      padding: 0.55rem 1.2rem;
       border-radius: 6px;
       text-decoration: none;
-      font-size: 0.9rem;
-      transition: background 0.2s;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
     }
 
-    .contact-links a:hover { background: #1e3f5c; }
-    .contact-links a.secondary {
-      background: transparent;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-    }
-    .contact-links a.secondary:hover { background: var(--primary); color: #fff; }
+    .btn:hover { opacity: 0.82; }
+    .btn-primary { background: var(--primary); color: #0d1117; }
+    .btn-outline  { border: 1px solid var(--border); color: var(--text); }
 
     /* ── Footer ── */
     footer {
       text-align: center;
       padding: 2rem 1rem;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--muted);
       border-top: 1px solid var(--border);
-      margin-top: 1rem;
-    }
-
-    @media (max-width: 600px) {
-      header h1 { font-size: 1.9rem; }
-      section { padding: 1.5rem 1.25rem; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Mysore Research</h1>
-    <p class="tagline">Exploring ideas through rigorous inquiry and open collaboration</p>
+    <div class="badge">Financial Technical Analysis</div>
+    <h1>Mysore <span>Research</span></h1>
+    <p class="tagline">
+      Rigorous analysis of price action, market structure, and quantitative signals
+      across equities, futures, and crypto markets.
+    </p>
   </header>
+
+  <!-- Static ticker for illustration -->
+  <div class="ticker-bar">
+    <div class="ticker-item"><span class="sym">NIFTY 50</span><span class="val">22,147</span><span class="chg up">+0.82%</span></div>
+    <div class="ticker-item"><span class="sym">SENSEX</span><span class="val">73,088</span><span class="chg up">+0.74%</span></div>
+    <div class="ticker-item"><span class="sym">BANK NIFTY</span><span class="val">48,312</span><span class="chg down">-0.31%</span></div>
+    <div class="ticker-item"><span class="sym">GOLD</span><span class="val">71,420</span><span class="chg up">+0.55%</span></div>
+    <div class="ticker-item"><span class="sym">USD/INR</span><span class="val">84.21</span><span class="chg down">-0.12%</span></div>
+  </div>
 
   <nav>
     <a href="#about">About</a>
-    <a href="#research">Research Areas</a>
-    <a href="#projects">Projects</a>
+    <a href="#focus">Focus Areas</a>
+    <a href="#methods">Methods</a>
+    <a href="#disclaimer">Disclaimer</a>
     <a href="#contact">Contact</a>
   </nav>
 
@@ -213,68 +312,110 @@
 
     <!-- About -->
     <section id="about">
-      <h2><span class="icon">&#128269;</span> About</h2>
+      <h2>About</h2>
       <p>
-        Welcome to Mysore Research — a hub for open exploration across technology,
-        data, and systems thinking. This site documents ongoing projects, published
-        findings, and collaborative work. Whether you're a fellow researcher, a
-        practitioner, or simply curious, you're in the right place.
+        Mysore Research is an independent platform dedicated to financial technical analysis.
+        We study price behaviour, volume dynamics, and market microstructure to develop
+        systematic, repeatable frameworks for understanding market cycles.
+      </p>
+      <p>
+        Our work spans Indian equity markets (NSE/BSE), commodity futures, and global indices,
+        with a focus on actionable pattern recognition and indicator-driven research — not tips
+        or speculation.
       </p>
     </section>
 
-    <!-- Research Areas -->
-    <section id="research">
-      <h2><span class="icon">&#128300;</span> Research Areas</h2>
-      <div class="area-grid">
-        <div class="area-card">
-          <h3>Data Systems</h3>
-          <p>Scalable architectures for storage, retrieval, and analysis.</p>
+    <!-- Focus Areas -->
+    <section id="focus">
+      <h2>Focus Areas</h2>
+      <div class="focus-grid">
+        <div class="focus-card">
+          <span class="icon">&#128200;</span>
+          <h3>Chart Pattern Analysis</h3>
+          <p>Classical and modern patterns: H&amp;S, triangles, flags, cup-and-handle.</p>
         </div>
-        <div class="area-card">
-          <h3>Machine Learning</h3>
-          <p>Applied ML models, evaluation, and interpretability.</p>
+        <div class="focus-card">
+          <span class="icon">&#128202;</span>
+          <h3>Technical Indicators</h3>
+          <p>RSI, MACD, Bollinger Bands, ATR, Ichimoku, and custom oscillators.</p>
         </div>
-        <div class="area-card">
-          <h3>Open Source</h3>
-          <p>Building and contributing to open, community-driven tools.</p>
+        <div class="focus-card">
+          <span class="icon">&#127919;</span>
+          <h3>Price Action</h3>
+          <p>Candlestick structures, support/resistance, and order-flow analysis.</p>
         </div>
-        <div class="area-card">
-          <h3>Knowledge Systems</h3>
-          <p>Organizing and surfacing information for human understanding.</p>
+        <div class="focus-card">
+          <span class="icon">&#128296;</span>
+          <h3>Quantitative Systems</h3>
+          <p>Backtested rule-based strategies with statistical performance metrics.</p>
+        </div>
+        <div class="focus-card">
+          <span class="icon">&#128736;</span>
+          <h3>Market Structure</h3>
+          <p>Higher highs/lows, trend identification, and market phase classification.</p>
+        </div>
+        <div class="focus-card">
+          <span class="icon">&#128737;</span>
+          <h3>Risk Management</h3>
+          <p>Position sizing models, drawdown analysis, and volatility-adjusted stops.</p>
         </div>
       </div>
     </section>
 
-    <!-- Projects -->
-    <section id="projects">
-      <h2><span class="icon">&#128196;</span> Projects</h2>
-      <ul class="project-list">
-        <li>
-          <span class="dot"></span>
-          <div>
-            <strong>mysoresearch.github.io</strong>
-            <p>This site — a living record of research, notes, and findings.</p>
-          </div>
-        </li>
-        <li>
-          <span class="dot"></span>
-          <div>
-            <strong>More projects coming soon</strong>
-            <p>Active work is being documented and will be published here.</p>
-          </div>
-        </li>
-      </ul>
+    <!-- Methods -->
+    <section id="methods">
+      <h2>Analytical Methods</h2>
+      <div class="two-col">
+        <div class="method-group">
+          <h3>Technical Tools</h3>
+          <ul>
+            <li>Multi-timeframe trend analysis</li>
+            <li>Volume-price relationship (VPA)</li>
+            <li>Fibonacci retracements &amp; extensions</li>
+            <li>Elliott Wave framework</li>
+            <li>Pivot points &amp; market profile</li>
+            <li>Relative strength comparison</li>
+          </ul>
+        </div>
+        <div class="method-group">
+          <h3>Quantitative Approach</h3>
+          <ul>
+            <li>Python-based backtesting</li>
+            <li>Walk-forward optimization</li>
+            <li>Sharpe, Sortino &amp; Calmar ratios</li>
+            <li>Monte Carlo simulation</li>
+            <li>Correlation &amp; sector rotation</li>
+            <li>Volatility regime detection</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <section id="disclaimer">
+      <h2>Disclaimer</h2>
+      <p>
+        All content published on this site is strictly for <strong>educational and research
+        purposes</strong>. Nothing here constitutes financial advice, investment recommendations,
+        or solicitation of any kind. Past performance of any strategy or pattern does not
+        guarantee future results. Markets involve substantial risk of loss — always conduct
+        your own due diligence and consult a registered financial advisor before making
+        investment decisions. Mysore Research is not SEBI-registered.
+      </p>
     </section>
 
     <!-- Contact -->
     <section id="contact">
-      <h2><span class="icon">&#9993;</span> Contact</h2>
-      <p>Interested in collaborating or have questions about the work?</p>
-      <div class="contact-links">
-        <a href="https://github.com/mysoresearch" target="_blank" rel="noopener">
+      <h2>Contact</h2>
+      <p style="color:var(--muted);font-size:0.92rem;">
+        Interested in collaborating on research, sharing chart ideas, or discussing
+        analytical frameworks? Reach out via GitHub or email.
+      </p>
+      <div class="contact-row">
+        <a class="btn btn-primary" href="https://github.com/mysoresearch" target="_blank" rel="noopener">
           &#128257; GitHub
         </a>
-        <a href="mailto:contact@mysoresearch.example.com" class="secondary">
+        <a class="btn btn-outline" href="mailto:hello@mysoresearch.com">
           &#128140; Email
         </a>
       </div>
@@ -283,7 +424,8 @@
   </main>
 
   <footer>
-    &copy; 2026 Mysore Research &mdash; Built with GitHub Pages
+    &copy; 2026 Mysore Research &mdash; Independent Financial Technical Analysis &mdash;
+    For educational use only. Not investment advice.
   </footer>
 
 </body>
