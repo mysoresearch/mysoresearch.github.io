@@ -3,275 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mysoresearch — US Emerging Market Trends</title>
+  <title>Mysoresearch</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg:      #0d1117;
       --surface: #161b22;
-      --border:  #21262d;
-      --primary: #58a6ff;
-      --green:   #3fb950;
-      --red:     #f85149;
-      --gold:    #d29922;
-      --purple:  #bc8cff;
+      --border:  #30363d;
       --text:    #e6edf3;
       --muted:   #8b949e;
+      --green:   #3fb950;
+      --red:     #f85149;
+      --blue:    #58a6ff;
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.65;
+      line-height: 1.6;
     }
 
     /* ── Header ── */
     header {
-      background: linear-gradient(160deg, #0d1117 0%, #0d1f33 60%, #0d1117 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 4rem 1.5rem 3rem;
+      padding: 2.5rem 1.5rem 2rem;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(88,166,255,0.04) 60px),
-        repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(88,166,255,0.04) 40px);
-      pointer-events: none;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(88,166,255,0.1);
-      border: 1px solid rgba(88,166,255,0.3);
-      color: var(--primary);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.9rem;
-      border-radius: 20px;
-      margin-bottom: 1.2rem;
-    }
-
-    header h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      color: var(--primary);
-    }
-
-    header p.tagline {
-      margin-top: 0.8rem;
-      font-size: 1rem;
-      color: var(--muted);
-      max-width: 580px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* ── Ticker bar ── */
-    .ticker-bar {
-      background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 0.55rem 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      font-size: 0.8rem;
-      font-family: 'Courier New', monospace;
     }
 
-    .ticker-item { display: flex; gap: 0.5rem; align-items: center; }
-    .ticker-item .sym { color: var(--muted); }
-    .ticker-item .val { color: var(--text); font-weight: 600; }
-    .ticker-item .chg.up   { color: var(--green); }
-    .ticker-item .chg.down { color: var(--red); }
+    header h1 { font-size: 2rem; font-weight: 700; color: var(--blue); }
+    header p   { color: var(--muted); margin-top: 0.4rem; font-size: 0.9rem; }
 
     /* ── Nav ── */
     nav {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: center;
-      gap: 0.25rem;
-      padding: 0 1rem;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
     }
 
     nav a {
       color: var(--muted);
       text-decoration: none;
-      padding: 0.75rem 1.1rem;
-      font-size: 0.875rem;
-      border-bottom: 2px solid transparent;
-      transition: color 0.2s, border-color 0.2s;
+      font-size: 0.85rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      transition: color 0.15s;
     }
 
-    nav a:hover { color: var(--text); border-bottom-color: var(--primary); }
+    nav a:hover { color: var(--text); }
 
-    /* ── Main ── */
+    /* ── Page layout ── */
     main {
-      max-width: 1020px;
-      margin: 2.5rem auto;
+      max-width: 860px;
+      margin: 2rem auto;
       padding: 0 1.25rem;
       display: grid;
-      gap: 1.75rem;
-    }
-
-    /* ── Section cards ── */
-    section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.75rem 2rem;
-    }
-
-    section h2 {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 1.25rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* ── About ── */
-    #about p { color: var(--muted); font-size: 0.95rem; }
-    #about p + p { margin-top: 0.75rem; }
-
-    /* ── Sector cards — 3 columns ── */
-    .sector-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-    }
-
-    @media (max-width: 700px) {
-      .sector-grid { grid-template-columns: 1fr; }
-    }
-
-    .sector-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem 1.4rem;
-      transition: border-color 0.2s, transform 0.15s;
-    }
-
-    .sector-card:hover { transform: translateY(-3px); }
-
-    .sector-card.energy  { border-top: 3px solid #f0a500; }
-    .sector-card.bio     { border-top: 3px solid var(--green); }
-    .sector-card.ai      { border-top: 3px solid var(--purple); }
-
-    .sector-card .sector-icon {
-      font-size: 1.8rem;
-      margin-bottom: 0.65rem;
-      display: block;
-    }
-
-    .sector-card h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-    }
-
-    .sector-card p {
-      font-size: 0.84rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.85rem;
-    }
-
-    .tag {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-    }
-
-    .tag.energy { background: rgba(240,165,0,0.12);   color: #f0a500; }
-    .tag.bio    { background: rgba(63,185,80,0.12);   color: var(--green); }
-    .tag.ai     { background: rgba(188,140,255,0.12); color: var(--purple); }
-
-    /* ── What we track ── */
-    .track-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
     }
 
-    @media (max-width: 700px) { .track-grid { grid-template-columns: 1fr; } }
-
-    .track-col h3 {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-bottom: 0.65rem;
+    /* ── Section ── */
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
     }
 
-    .track-col.energy h3 { color: #f0a500; }
-    .track-col.bio    h3 { color: var(--green); }
-    .track-col.ai     h3 { color: var(--purple); }
-
-    .track-col ul { list-style: none; display: grid; gap: 0.45rem; }
-
-    .track-col li {
-      font-size: 0.86rem;
-      color: var(--muted);
-      padding-left: 1rem;
-      position: relative;
-    }
-
-    .track-col li::before {
-      content: '›';
-      position: absolute;
-      left: 0;
-      color: var(--primary);
-      font-weight: 700;
-    }
-
-    /* ── Daily Movers ── */
-    #movers .updated {
+    section h2 {
       font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       color: var(--muted);
       margin-bottom: 1rem;
     }
 
+    /* ── Winners / Losers ── */
     .movers-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
+      gap: 1rem;
     }
 
-    @media (max-width: 600px) { .movers-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .movers-grid { grid-template-columns: 1fr; } }
 
     .movers-col h3 {
       font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.65rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
     }
 
     .movers-col.winners h3 { color: var(--green); }
@@ -279,485 +102,258 @@
 
     .mover-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0.55rem 0.75rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 0.45rem;
-      font-size: 0.85rem;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
     }
 
-    .mover-left { display: flex; flex-direction: column; gap: 0.1rem; }
-    .mover-ticker { font-weight: 700; color: var(--text); font-family: 'Courier New', monospace; }
+    .mover-row:last-child { border-bottom: none; }
+
+    .mover-ticker { font-weight: 700; font-family: monospace; color: var(--text); }
     .mover-name   { font-size: 0.75rem; color: var(--muted); }
-    .mover-right  { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; }
-    .mover-price  { font-weight: 600; color: var(--text); font-family: 'Courier New', monospace; }
-    .mover-chg    { font-size: 0.8rem; font-weight: 700; font-family: 'Courier New', monospace; }
+    .mover-price  { font-family: monospace; font-size: 0.85rem; color: var(--text); }
+    .mover-chg    { font-family: monospace; font-size: 0.85rem; font-weight: 600; }
     .mover-chg.up   { color: var(--green); }
     .mover-chg.down { color: var(--red); }
 
-    .movers-loading {
-      color: var(--muted);
-      font-size: 0.875rem;
-      padding: 1rem 0;
-    }
-
     /* ── Sector movers ── */
-    .sector-movers-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin-top: 1.5rem;
+    .sector-tabs {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
     }
 
-    @media (max-width: 700px) { .sector-movers-grid { grid-template-columns: 1fr; } }
-
-    .sector-mover-col h3 {
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.6rem;
-      padding-bottom: 0.4rem;
-      border-bottom: 1px solid var(--border);
+    .stab {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .sector-mover-col.energy h3 { color: #f0a500; }
-    .sector-mover-col.bio    h3 { color: var(--green); }
-    .sector-mover-col.ai     h3 { color: var(--purple); }
+    .stab.active, .stab:hover { color: var(--text); border-color: var(--blue); }
+    .stab.active { background: var(--blue); color: #0d1117; border-color: var(--blue); }
+
+    .spanel { display: none; }
+    .spanel.active { display: block; }
 
     /* ── News ── */
     .news-tabs {
       display: flex;
-      gap: 0.35rem;
-      margin-bottom: 1.1rem;
-      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
     }
 
-    .news-tab {
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
+    .ntab {
+      background: none;
       border: 1px solid var(--border);
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: transparent;
       color: var(--muted);
-      transition: all 0.18s;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .news-tab:hover               { color: var(--text); border-color: var(--muted); }
-    .news-tab.active              { background: var(--primary); border-color: var(--primary); color: #0d1117; }
-    .news-tab.active.energy-tab   { background: #f0a500; border-color: #f0a500; }
-    .news-tab.active.bio-tab      { background: var(--green); border-color: var(--green); }
-    .news-tab.active.ai-tab       { background: var(--purple); border-color: var(--purple); }
+    .ntab.active, .ntab:hover { color: var(--text); border-color: var(--blue); }
+    .ntab.active { background: var(--blue); color: #0d1117; border-color: var(--blue); }
 
-    .news-panel { display: none; }
-    .news-panel.active { display: grid; gap: 0.65rem; }
+    .npanel { display: none; }
+    .npanel.active { display: grid; gap: 0.5rem; }
 
     .news-card {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      padding: 0.85rem 1rem;
-      background: var(--bg);
+      display: block;
+      padding: 0.75rem;
       border: 1px solid var(--border);
-      border-radius: 7px;
+      border-radius: 6px;
       text-decoration: none;
-      transition: border-color 0.18s;
+      transition: border-color 0.15s;
     }
 
-    .news-card:hover { border-color: var(--primary); }
+    .news-card:hover { border-color: var(--blue); }
 
-    .news-card .news-title {
-      font-size: 0.9rem;
-      font-weight: 600;
+    .news-title {
+      font-size: 0.875rem;
       color: var(--text);
-      line-height: 1.45;
+      font-weight: 500;
+      line-height: 1.4;
     }
 
-    .news-card .news-meta {
-      display: flex;
-      gap: 0.75rem;
+    .news-meta {
+      margin-top: 0.3rem;
       font-size: 0.75rem;
       color: var(--muted);
     }
 
-    .news-card .news-tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.15rem 0.5rem;
-      border-radius: 10px;
-      font-family: 'Courier New', monospace;
-    }
-
-    .news-card .news-tag.energy { background: rgba(240,165,0,0.12);   color: #f0a500; }
-    .news-card .news-tag.bio    { background: rgba(63,185,80,0.12);   color: var(--green); }
-    .news-card .news-tag.ai     { background: rgba(188,140,255,0.12); color: var(--purple); }
-
-    .news-empty { font-size: 0.85rem; color: var(--muted); padding: 0.5rem 0; }
-
     /* ── Disclaimer ── */
-    #disclaimer {
-      border-color: rgba(248,81,73,0.3);
-      background: rgba(248,81,73,0.04);
+    #disclaimer p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
     }
 
-    #disclaimer h2 { color: var(--red); }
-    #disclaimer p  { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+    .updated { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; }
+    .loading  { font-size: 0.85rem; color: var(--muted); }
 
-    /* ── Contact ── */
-    #contact p { color: var(--muted); font-size: 0.92rem; }
-
-    .contact-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 0.85rem;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.55rem 1.2rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover { opacity: 0.82; }
-    .btn-primary { background: var(--primary); color: #0d1117; }
-    .btn-outline  { border: 1px solid var(--border); color: var(--text); }
-
-    /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.8rem;
+      padding: 1.5rem;
+      font-size: 0.78rem;
       color: var(--muted);
       border-top: 1px solid var(--border);
-    }
-
-    @media (max-width: 600px) {
-      header h1 { font-size: 2rem; }
-      section { padding: 1.4rem 1.2rem; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="badge">US Market · Emerging Trends Research</div>
-    <h1>Mysoresearch</h1>
-    <p class="tagline">
-      Tracking the frontier — Energy, Biosciences, and Artificial Intelligence
-      shaping the next decade of US market growth.
-    </p>
-  </header>
+<header>
+  <h1>Mysoresearch</h1>
+  <p>US Emerging Trends — Energy · Biosciences · AI</p>
+</header>
 
-  <!-- US Market Ticker -->
-  <div class="ticker-bar">
-    <div class="ticker-item"><span class="sym">S&amp;P 500</span><span class="val">5,218</span><span class="chg up">+0.61%</span></div>
-    <div class="ticker-item"><span class="sym">NASDAQ</span><span class="val">16,340</span><span class="chg up">+0.89%</span></div>
-    <div class="ticker-item"><span class="sym">DOW</span><span class="val">38,904</span><span class="chg up">+0.32%</span></div>
-    <div class="ticker-item"><span class="sym">XBI (Biotech)</span><span class="val">94.12</span><span class="chg down">-0.44%</span></div>
-    <div class="ticker-item"><span class="sym">NLR (Nuclear)</span><span class="val">52.38</span><span class="chg up">+1.14%</span></div>
-  </div>
+<nav>
+  <a href="#movers">Daily Movers</a>
+  <a href="#sectors">By Sector</a>
+  <a href="#news">News</a>
+  <a href="#disclaimer">Disclaimer</a>
+</nav>
 
-  <nav>
-    <a href="#about">About</a>
-    <a href="#movers">Daily Movers</a>
-    <a href="#news">News</a>
-    <a href="#sectors">Sectors</a>
-    <a href="#tracking">What We Track</a>
-    <a href="#disclaimer">Disclaimer</a>
-    <a href="#contact">Contact</a>
-  </nav>
+<main>
 
-  <main>
+  <!-- Daily Movers -->
+  <section id="movers">
+    <h2>Daily Movers</h2>
+    <p class="updated" id="updated-at">Loading...</p>
+    <div class="movers-grid" id="movers-grid">
+      <p class="loading">Fetching data...</p>
+    </div>
+  </section>
 
-    <!-- Daily Movers -->
-    <section id="movers">
-      <h2>Daily Movers</h2>
-      <p class="updated" id="updated-at">Loading latest data...</p>
+  <!-- By Sector -->
+  <section id="sectors">
+    <h2>By Sector</h2>
+    <div class="sector-tabs">
+      <button class="stab active" data-s="Energy"      onclick="switchSector(this)">Energy</button>
+      <button class="stab"        data-s="Biosciences" onclick="switchSector(this)">Biosciences</button>
+      <button class="stab"        data-s="AI"          onclick="switchSector(this)">AI</button>
+    </div>
+    <div id="sector-panels"></div>
+  </section>
 
-      <div class="movers-grid" id="winners-losers">
-        <div class="movers-loading">Fetching market data...</div>
+  <!-- News -->
+  <section id="news">
+    <h2>Latest News</h2>
+    <div class="news-tabs">
+      <button class="ntab active" data-n="Energy"      onclick="switchNews(this)">Energy</button>
+      <button class="ntab"        data-n="Biosciences" onclick="switchNews(this)">Biosciences</button>
+      <button class="ntab"        data-n="AI"          onclick="switchNews(this)">AI</button>
+    </div>
+    <div id="news-panels"><p class="loading">Loading news...</p></div>
+  </section>
+
+  <!-- Disclaimer -->
+  <section id="disclaimer">
+    <h2>Disclaimer</h2>
+    <p>All content is for educational and informational purposes only. Nothing here constitutes financial advice or a recommendation to buy or sell any security. Investing involves risk, including possible loss of principal. Always consult a licensed financial advisor before making investment decisions.</p>
+  </section>
+
+</main>
+
+<footer>&copy; 2026 Mysoresearch &mdash; For educational use only</footer>
+
+<script>
+  let marketData = {};
+
+  function fmt(v)   { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+  function cls(v)   { return v >= 0 ? 'up' : 'down'; }
+
+  function moverRow(s) {
+    return `<div class="mover-row">
+      <div>
+        <div class="mover-ticker">${s.ticker}</div>
+        <div class="mover-name">${s.name}</div>
       </div>
-
-      <div class="sector-movers-grid" id="sector-movers"></div>
-    </section>
-
-    <!-- News -->
-    <section id="news">
-      <h2>Latest News from Yahoo Finance</h2>
-      <div class="news-tabs" id="news-tabs">
-        <button class="news-tab active" data-sector="Energy" onclick="switchTab(this)">Energy</button>
-        <button class="news-tab" data-sector="Biosciences" onclick="switchTab(this)">Biosciences</button>
-        <button class="news-tab" data-sector="AI" onclick="switchTab(this)">AI</button>
+      <div style="text-align:right">
+        <div class="mover-price">$${s.close.toFixed(2)}</div>
+        <div class="mover-chg ${cls(s.change)}">${fmt(s.change)}</div>
       </div>
-      <div id="news-panels">
-        <p class="news-empty">Loading news...</p>
+    </div>`;
+  }
+
+  function renderMovers(data) {
+    document.getElementById('updated-at').textContent = 'Updated: ' + data.updated_at;
+    document.getElementById('movers-grid').innerHTML = `
+      <div class="movers-col winners">
+        <h3>Top Winners</h3>
+        ${data.winners.map(moverRow).join('')}
       </div>
-    </section>
+      <div class="movers-col losers">
+        <h3>Top Losers</h3>
+        ${data.losers.map(moverRow).join('')}
+      </div>`;
+  }
 
-    <!-- About -->
-    <section id="about">
-      <h2>About</h2>
-      <p>
-        Mysoresearch is an independent platform tracking emerging trends across the US market.
-        We focus on three high-conviction themes — Energy, Biosciences, and Artificial Intelligence —
-        where technological breakthroughs are rapidly translating into capital flows and
-        structural market shifts.
-      </p>
-      <p>
-        Our analysis combines technical price action with catalyst-driven research: regulatory
-        decisions, scientific milestones, and institutional positioning that move sectors
-        before consensus catches up.
-      </p>
-    </section>
+  function renderSectorPanels(sectors) {
+    const html = Object.entries(sectors).map(([name, stocks]) =>
+      `<div class="spanel" data-sp="${name}">
+        ${stocks.map(moverRow).join('')}
+      </div>`
+    ).join('');
+    document.getElementById('sector-panels').innerHTML = html;
+    document.querySelector('.spanel').classList.add('active');
+  }
 
-    <!-- Sectors -->
-    <section id="sectors">
-      <h2>Sectors</h2>
-      <div class="sector-grid">
+  function switchSector(btn) {
+    document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.spanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.spanel[data-sp="${btn.dataset.s}"]`)?.classList.add('active');
+  }
 
-        <div class="sector-card energy">
-          <span class="sector-icon">&#9762;</span>
-          <h3>Energy</h3>
-          <p>
-            Nuclear power (SMRs, uranium, fusion), next-gen grid infrastructure,
-            and the policy landscape reshaping US energy markets. Tracking pure-play
-            names and ETFs like NLR and URA.
-          </p>
-          <div class="tag-row">
-            <span class="tag energy">Nuclear</span>
-            <span class="tag energy">SMR</span>
-            <span class="tag energy">Uranium</span>
-            <span class="tag energy">Fusion</span>
-            <span class="tag energy">Grid Tech</span>
-          </div>
-        </div>
+  function renderNewsPanels(news) {
+    const html = Object.entries(news).map(([sector, articles]) =>
+      `<div class="npanel" data-np="${sector}">
+        ${articles.length
+          ? articles.map(a => `
+              <a class="news-card" href="${a.url}" target="_blank" rel="noopener">
+                <div class="news-title">${a.title}</div>
+                <div class="news-meta">${a.publisher}${a.published ? ' · ' + a.published : ''}</div>
+              </a>`).join('')
+          : '<p class="loading">No articles yet.</p>'}
+      </div>`
+    ).join('');
+    document.getElementById('news-panels').innerHTML = html;
+    document.querySelector('.npanel').classList.add('active');
+  }
 
-        <div class="sector-card bio">
-          <span class="sector-icon">&#129516;</span>
-          <h3>Biosciences</h3>
-          <p>
-            Gene editing, CRISPR therapeutics, synthetic biology, pharmaceutical
-            pipelines, oncology, GLP-1, and medical devices. Tracking FDA catalysts,
-            clinical readouts, and ETFs like XBI and IBB.
-          </p>
-          <div class="tag-row">
-            <span class="tag bio">CRISPR</span>
-            <span class="tag bio">Gene Therapy</span>
-            <span class="tag bio">GLP-1</span>
-            <span class="tag bio">Oncology</span>
-            <span class="tag bio">FDA Pipeline</span>
-          </div>
-        </div>
+  function switchNews(btn) {
+    document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.npanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.npanel[data-np="${btn.dataset.n}"]`)?.classList.add('active');
+  }
 
-        <div class="sector-card ai">
-          <span class="sector-icon">&#129504;</span>
-          <h3>Artificial Intelligence</h3>
-          <p>
-            Large language models, AI infrastructure, quantum computing, semiconductor
-            supply chains, and enterprise AI adoption. Tracking GPU leaders, model
-            companies, and data center plays.
-          </p>
-          <div class="tag-row">
-            <span class="tag ai">LLMs</span>
-            <span class="tag ai">Quantum</span>
-            <span class="tag ai">Semiconductors</span>
-            <span class="tag ai">AI Infra</span>
-            <span class="tag ai">Data Centers</span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- What We Track -->
-    <section id="tracking">
-      <h2>What We Track</h2>
-      <div class="track-grid">
-
-        <div class="track-col energy">
-          <h3>Energy</h3>
-          <ul>
-            <li>NRC &amp; DOE regulatory decisions</li>
-            <li>Uranium spot price &amp; contract trends</li>
-            <li>SMR project timelines &amp; funding</li>
-            <li>Fusion milestone announcements</li>
-            <li>Data center power demand growth</li>
-            <li>IRA policy impact on clean energy</li>
-          </ul>
-        </div>
-
-        <div class="track-col bio">
-          <h3>Biosciences</h3>
-          <ul>
-            <li>FDA PDUFA dates &amp; approval outcomes</li>
-            <li>Phase 2 / Phase 3 trial readouts</li>
-            <li>GLP-1 competitive landscape</li>
-            <li>Gene therapy IND filings</li>
-            <li>M&amp;A deals &amp; licensing agreements</li>
-            <li>Medicare drug pricing negotiations</li>
-          </ul>
-        </div>
-
-        <div class="track-col ai">
-          <h3>Artificial Intelligence</h3>
-          <ul>
-            <li>GPU supply &amp; NVIDIA earnings cycles</li>
-            <li>LLM benchmark &amp; capability releases</li>
-            <li>Quantum computing milestones</li>
-            <li>Enterprise AI adoption rates</li>
-            <li>US-China chip export controls</li>
-            <li>Data center capex from hyperscalers</li>
-          </ul>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Disclaimer -->
-    <section id="disclaimer">
-      <h2>Disclaimer</h2>
-      <p>
-        All content on Mysoresearch is for <strong>educational and informational purposes only</strong>.
-        Nothing published here constitutes financial advice, investment recommendations,
-        or a solicitation to buy or sell any security. Past trends do not guarantee
-        future performance. Investing in emerging technology sectors involves substantial
-        risk, including possible loss of principal. Always conduct your own due diligence
-        and consult a licensed financial advisor before making any investment decisions.
-      </p>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Have research ideas, sector insights, or want to collaborate? Reach out.</p>
-      <div class="contact-row">
-        <a class="btn btn-primary" href="https://github.com/mysoresearch" target="_blank" rel="noopener">
-          &#128257; GitHub
-        </a>
-        <a class="btn btn-outline" href="mailto:hello@mysoresearch.com">
-          &#128140; Email
-        </a>
-      </div>
-    </section>
-
-  </main>
-
-  <footer>
-    &copy; 2026 Mysoresearch &mdash; US Emerging Trends Research &mdash; For educational use only. Not investment advice.
-  </footer>
-
-  <script>
-    const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
-
-    function chgClass(v) { return v >= 0 ? 'up' : 'down'; }
-    function chgStr(v)   { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
-
-    function moverRow(s) {
-      return `
-        <div class="mover-row">
-          <div class="mover-left">
-            <span class="mover-ticker">${s.ticker}</span>
-            <span class="mover-name">${s.name}</span>
-          </div>
-          <div class="mover-right">
-            <span class="mover-price">$${s.close.toFixed(2)}</span>
-            <span class="mover-chg ${chgClass(s.change)}">${chgStr(s.change)}</span>
-          </div>
-        </div>`;
-    }
-
-    function newsCard(a) {
-      const cls = SECTOR_CLASS[a.sector] || '';
-      return `
-        <a class="news-card" href="${a.url}" target="_blank" rel="noopener noreferrer">
-          <span class="news-title">${a.title}</span>
-          <div class="news-meta">
-            <span class="news-tag ${cls}">${a.ticker}</span>
-            <span>${a.publisher}</span>
-            ${a.published ? `<span>${a.published}</span>` : ''}
-          </div>
-        </a>`;
-    }
-
-    let allNews = {};
-
-    function switchTab(btn) {
-      document.querySelectorAll('.news-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      const sector = btn.dataset.sector;
-      const cls    = SECTOR_CLASS[sector] || '';
-      btn.classList.add(cls + '-tab');
-      renderNewsPanel(sector);
-    }
-
-    function renderNewsPanel(sector) {
-      const articles = allNews[sector] || [];
-      const panels   = document.getElementById('news-panels');
-      if (!articles.length) {
-        panels.innerHTML = '<p class="news-empty">No articles available yet.</p>';
-        return;
-      }
-      panels.innerHTML = `<div class="news-panel active">${articles.map(newsCard).join('')}</div>`;
-    }
-
-    fetch('data/market_data.json')
-      .then(r => r.json())
-      .then(data => {
-        // Timestamp
-        document.getElementById('updated-at').textContent =
-          'Last updated: ' + data.updated_at + ' (previous trading day close)';
-
-        // Winners / Losers
-        if (data.winners && data.winners.length) {
-          document.getElementById('winners-losers').innerHTML = `
-            <div class="movers-col winners">
-              <h3>Top Winners</h3>
-              ${data.winners.map(moverRow).join('')}
-            </div>
-            <div class="movers-col losers">
-              <h3>Top Losers</h3>
-              ${data.losers.map(moverRow).join('')}
-            </div>`;
-        } else {
-          document.getElementById('winners-losers').innerHTML =
-            '<p style="color:var(--muted);font-size:.85rem">Market data not yet available — updated each weekday at 8 AM ET.</p>';
-        }
-
-        // Per-sector breakdowns
-        if (data.sectors && Object.keys(data.sectors).length) {
-          document.getElementById('sector-movers').innerHTML =
-            Object.entries(data.sectors).map(([name, stocks]) => `
-              <div class="sector-mover-col ${SECTOR_CLASS[name] || ''}">
-                <h3>${name}</h3>
-                ${stocks.map(moverRow).join('')}
-              </div>`).join('');
-        }
-
-        // News
-        allNews = data.news || {};
-        const activeTab = document.querySelector('.news-tab.active');
-        if (activeTab) renderNewsPanel(activeTab.dataset.sector);
-      })
-      .catch(() => {
-        document.getElementById('updated-at').textContent =
-          'Market data not yet available — updated each weekday at 8 AM ET.';
-        document.getElementById('winners-losers').innerHTML = '';
-        document.getElementById('news-panels').innerHTML =
-          '<p class="news-empty">News unavailable.</p>';
-      });
-  </script>
+  fetch('data/market_data.json')
+    .then(r => r.json())
+    .then(data => {
+      marketData = data;
+      if (data.winners?.length)  renderMovers(data);
+      else document.getElementById('movers-grid').innerHTML =
+        '<p class="loading">Data not yet available — updates weekdays at 8 AM ET.</p>';
+      if (data.sectors) renderSectorPanels(data.sectors);
+      if (data.news)    renderNewsPanels(data.news);
+    })
+    .catch(() => {
+      document.getElementById('updated-at').textContent = '';
+      document.getElementById('movers-grid').innerHTML =
+        '<p class="loading">Unable to load data.</p>';
+    });
+</script>
 
 </body>
 </html>
