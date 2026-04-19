@@ -6,9 +6,25 @@ const SECTORS = ['Energy', 'Biosciences', 'AI'];
 const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
 
 const GRADIENTS = {
-  Energy:      'linear-gradient(135deg, #f0a500 0%, #c47d00 100%)',
-  Biosciences: 'linear-gradient(135deg, #1a7f37 0%, #2da44e 100%)',
-  AI:          'linear-gradient(135deg, #6e40c9 0%, #9a6dd7 100%)',
+  Energy:      'linear-gradient(160deg, #1a0e00 0%, #3d2200 50%, #1a0e00 100%)',
+  Biosciences: 'linear-gradient(160deg, #001a0e 0%, #003d22 50%, #001a0e 100%)',
+  AI:          'linear-gradient(160deg, #0e0022 0%, #22003d 50%, #0e0022 100%)',
+};
+
+const ACTION_LABEL = {
+  up:   'UPGRADE',
+  down: 'DOWNGRADE',
+  init: 'INITIATION',
+  reit: 'REITERATION',
+  main: 'MAINTAINED',
+};
+
+const ACTION_COLOR = {
+  up:   '#3fb950',
+  down: '#f85149',
+  init: '#38bdf8',
+  reit: '#a78bfa',
+  main: '#8e8e8e',
 };
 
 export default function Feed() {
@@ -29,7 +45,7 @@ export default function Feed() {
 
   const reels = data
     ? visibleSectors.flatMap(sector =>
-        (data.news?.[sector] ?? []).map(a => ({ ...a, sector }))
+        (data.actions?.[sector] ?? []).map(a => ({ ...a, sector }))
       )
     : [];
 
@@ -51,20 +67,18 @@ export default function Feed() {
         </div>
       </header>
 
-      {/* News reels */}
+      {/* Analyst actions reels */}
       {tab === 'news' && (
         loading ? (
-          <div className="full-center">Loading market data…</div>
+          <div className="full-center">Loading analyst data…</div>
         ) : error ? (
-          <div className="full-center" style={{ color: '#f85149' }}>
-            Failed to load: {error}
-          </div>
+          <div className="full-center" style={{ color: '#f85149' }}>Failed: {error}</div>
         ) : reels.length === 0 ? (
-          <div className="full-center">No articles available.</div>
+          <div className="full-center">No analyst actions available.</div>
         ) : (
           <div className="reels-wrap">
-            {reels.map((article, i) => (
-              <ReelCard key={i} article={article} />
+            {reels.map((action, i) => (
+              <ActionCard key={i} action={action} />
             ))}
           </div>
         )
@@ -87,8 +101,8 @@ export default function Feed() {
       {/* Bottom tab bar */}
       <nav className="tabbar">
         <button className={`tab-btn${tab === 'news' ? ' active' : ''}`} onClick={() => setTab('news')}>
-          <span className="tab-icon">📰</span>
-          News
+          <span className="tab-icon">📊</span>
+          Analyst
         </button>
         <button className={`tab-btn${tab === 'stocks' ? ' active' : ''}`} onClick={() => setTab('stocks')}>
           <span className="tab-icon">📈</span>
@@ -99,39 +113,35 @@ export default function Feed() {
   );
 }
 
-function ReelCard({ article }) {
-  const [imgFailed, setImgFailed] = useState(false);
-  const sectorClass = SECTOR_CLASS[article.sector] ?? '';
+function ActionCard({ action }) {
+  const { sector, ticker, firm, action: act, from_grade, to_grade, date } = action;
+  const sectorClass = SECTOR_CLASS[sector] ?? '';
+  const label = ACTION_LABEL[act] ?? act.toUpperCase();
+  const color = ACTION_COLOR[act] ?? '#fff';
 
   return (
     <div className="reel">
-      {article.thumbnail && !imgFailed ? (
-        <img
-          className="reel-bg"
-          src={article.thumbnail}
-          alt=""
-          loading="lazy"
-          onError={() => setImgFailed(true)}
-        />
-      ) : (
-        <div className="reel-placeholder" style={{ background: GRADIENTS[article.sector] }}>
-          {article.title}
-        </div>
-      )}
-
+      <div className="reel-bg-color" style={{ background: GRADIENTS[sector] }} />
       <div className="reel-gradient" />
 
       <div className="reel-content">
-        <span className={`reel-sector ${sectorClass}`}>{article.sector}</span>
-        <p className="reel-title">{article.title}</p>
-        <p className="reel-meta">
-          {article.publisher}{article.published ? ` · ${article.published}` : ''}
+        <span className={`reel-sector ${sectorClass}`}>{sector}</span>
+
+        <p className="reel-action-label" style={{ color }}>{label}</p>
+
+        <p className="reel-title">{firm}</p>
+
+        <p className="reel-ticker">
+          <span className="reel-ticker-sym">{ticker}</span>
+          {from_grade && to_grade && (
+            <span className="reel-grade-change"> · {from_grade} → {to_grade}</span>
+          )}
+          {!from_grade && to_grade && (
+            <span className="reel-grade-change"> · {to_grade}</span>
+          )}
         </p>
-        {article.url && (
-          <a className="reel-link" href={article.url} target="_blank" rel="noopener noreferrer">
-            Read article ↗
-          </a>
-        )}
+
+        <p className="reel-meta">{date}</p>
       </div>
 
       <div className="reel-actions">

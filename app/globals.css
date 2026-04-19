@@ -182,17 +182,32 @@ body {
 .reel-sector.bio    { background: var(--bio);    color: #000; }
 .reel-sector.ai     { background: var(--ai);     color: #000; }
 
-.reel-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.35;
-  color: #fff;
-  margin-bottom: 0.4rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.reel-action-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
+
+.reel-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.reel-ticker {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 0.4rem;
+  font-family: monospace;
+}
+
+.reel-ticker-sym   { color: #fff; font-weight: 700; }
+.reel-grade-change { color: rgba(255,255,255,0.65); }
 
 .reel-meta {
   font-size: 0.72rem;

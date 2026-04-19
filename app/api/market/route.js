@@ -12,8 +12,8 @@ export async function GET() {
       'SELECT * FROM quotes ORDER BY sector, change_pct DESC'
     ).all();
 
-    const articles = db.prepare(
-      'SELECT * FROM news ORDER BY published_ts DESC'
+    const actions = db.prepare(
+      'SELECT * FROM analyst_actions ORDER BY action_date DESC'
     ).all();
 
     const updatedAt = db.prepare(
@@ -34,20 +34,20 @@ export async function GET() {
       });
     }
 
-    const news = {};
-    for (const a of articles) {
-      if (!news[a.sector]) news[a.sector] = [];
-      news[a.sector].push({
-        title:     a.title,
-        url:       a.url,
-        publisher: a.publisher,
-        published: a.published,
-        thumbnail: a.thumbnail,
-        ticker:    a.ticker,
+    const analystBySector = {};
+    for (const a of actions) {
+      if (!analystBySector[a.sector]) analystBySector[a.sector] = [];
+      analystBySector[a.sector].push({
+        ticker:     a.ticker,
+        firm:       a.firm,
+        action:     a.action,
+        from_grade: a.from_grade,
+        to_grade:   a.to_grade,
+        date:       a.action_date,
       });
     }
 
-    return Response.json({ updatedAt, sectors, news });
+    return Response.json({ updatedAt, sectors, actions: analystBySector });
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
   }
