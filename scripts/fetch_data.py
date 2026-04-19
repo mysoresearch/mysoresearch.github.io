@@ -40,15 +40,13 @@ SECTORS = {
     ],
 }
 
-# One representative ticker per sector for news fetching
 NEWS_TICKERS = {
-    "Energy":      ["CCJ", "CEG", "SMR", "OKLO"],
-    "Biosciences": ["LLY", "VRTX", "MRNA", "CRSP"],
-    "AI":          ["NVDA", "MSFT", "IONQ", "AMD"],
+    "Energy":      ["CCJ", "CEG", "SMR", "OKLO", "UEC"],
+    "Biosciences": ["LLY", "VRTX", "MRNA", "CRSP", "NTLA"],
+    "AI":          ["NVDA", "MSFT", "IONQ", "AMD", "GOOGL"],
 }
 
-# Max news articles per sector
-NEWS_PER_SECTOR = 5
+NEWS_PER_SECTOR = 9  # 3x3 grid per sector
 
 
 def fetch_stock(ticker):
@@ -69,6 +67,24 @@ def fetch_stock(ticker):
         return None
 
 
+def get_thumbnail(content):
+    # Try nested resolutions array
+    try:
+        resolutions = content.get("thumbnail", {}).get("resolutions", [])
+        if resolutions:
+            return resolutions[0].get("url", "")
+    except Exception:
+        pass
+    # Try top-level thumbnail in content wrapper
+    try:
+        resolutions = (content.get("content", {}) or {}).get("thumbnail", {}).get("resolutions", [])
+        if resolutions:
+            return resolutions[0].get("url", "")
+    except Exception:
+        pass
+    return ""
+
+
 def fetch_news(sector, tickers):
     seen_urls = set()
     articles  = []
@@ -77,18 +93,17 @@ def fetch_news(sector, tickers):
         try:
             raw = yf.Ticker(ticker).news or []
             for item in raw:
-                # yfinance >=0.2.38 nests content inside a 'content' key
                 content = item.get("content", item)
                 url     = (content.get("canonicalUrl") or {}).get("url") or content.get("url", "")
                 title   = content.get("title", "")
                 pub     = (content.get("provider") or {}).get("displayName") or content.get("publisher", "")
                 ts      = content.get("pubDate") or content.get("providerPublishTime")
+                thumb   = get_thumbnail(item)
 
                 if not url or not title or url in seen_urls:
                     continue
                 seen_urls.add(url)
 
-                # Format timestamp
                 if isinstance(ts, (int, float)):
                     published = datetime.datetime.utcfromtimestamp(ts).strftime("%b %d, %Y")
                 elif isinstance(ts, str):
@@ -106,6 +121,7 @@ def fetch_news(sector, tickers):
                     "published": published,
                     "ticker":    ticker,
                     "sector":    sector,
+                    "thumbnail": thumb,
                 })
 
                 if len(articles) >= NEWS_PER_SECTOR:
@@ -132,32 +148,21 @@ def main():
         results.sort(key=lambda x: x["change"], reverse=True)
         sector_data[sector] = results
 
-    all_stocks.sort(key=lambda x: x["change"], reverse=True)
-    top_winners = all_stocks[:5]
-    top_losers  = list(reversed(all_stocks))[:5]
-
-    # Fetch news per sector
     sector_news = {}
     for sector, tickers in NEWS_TICKERS.items():
         sector_news[sector] = fetch_news(sector, tickers)
         print(f"News [{sector}]: {len(sector_news[sector])} articles")
 
     output = {
-        "updated_at":  datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
-        "winners":     top_winners,
-        "losers":      top_losers,
-        "sectors":     sector_data,
-        "news":        sector_news,
+        "updated_at": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "sectors":    sector_data,
+        "news":       sector_news,
     }
 
     with open("data/market_data.json", "w") as f:
         json.dump(output, f, indent=2)
 
     print(f"Done — {len(all_stocks)} stocks fetched.")
-    if top_winners:
-        print(f"Top winner: {top_winners[0]['ticker']} ({top_winners[0]['change']:+.2f}%)")
-    if top_losers:
-        print(f"Top loser:  {top_losers[0]['ticker']} ({top_losers[0]['change']:+.2f}%)")
 
 
 if __name__ == "__main__":

@@ -8,305 +8,433 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      #0d1117;
-      --surface: #161b22;
-      --border:  #30363d;
-      --text:    #e6edf3;
-      --muted:   #8b949e;
-      --green:   #3fb950;
-      --red:     #f85149;
-      --blue:    #58a6ff;
+      --bg:      #fafafa;
+      --surface: #ffffff;
+      --border:  #dbdbdb;
+      --text:    #262626;
+      --muted:   #8e8e8e;
+      --blue:    #0095f6;
+      --green:   #1a7f37;
+      --red:     #d93025;
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
     }
 
-    /* ── Header ── */
-    header {
-      padding: 2.5rem 1.5rem 2rem;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    header h1 { font-size: 2rem; font-weight: 700; color: var(--blue); }
-    header p   { color: var(--muted); margin-top: 0.4rem; font-size: 0.9rem; }
-
-    /* ── Nav ── */
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 4px;
-      transition: color 0.15s;
-    }
-
-    nav a:hover { color: var(--text); }
-
-    /* ── Page layout ── */
-    main {
-      max-width: 860px;
-      margin: 2rem auto;
-      padding: 0 1.25rem;
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    /* ── Section ── */
-    section {
+    /* ── Top bar ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1rem;
     }
 
-    section h2 {
-      font-size: 0.75rem;
-      font-weight: 600;
+    .topbar h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      font-family: 'Georgia', serif;
+    }
+
+    .topbar .updated {
+      position: absolute;
+      right: 1rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* ── Stories / sector filter ── */
+    .stories-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .stories-wrap::-webkit-scrollbar { display: none; }
+
+    .stories {
+      display: flex;
+      gap: 1.1rem;
+      width: max-content;
+      margin: 0 auto;
+    }
+
+    .story {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .story-ring {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+
+    .story-ring.active {
+      background: var(--blue);
+    }
+
+    .story-ring.inactive {
+      background: var(--border);
+    }
+
+    .story-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid white;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .story span {
+      font-size: 0.7rem;
+      color: var(--text);
+      font-weight: 500;
+      max-width: 62px;
+      text-align: center;
+    }
+
+    /* ── Feed ── */
+    .feed {
+      max-width: 935px;
+      margin: 1.25rem auto;
+      padding: 0 0.75rem;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--muted);
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
+      padding-left: 0.25rem;
     }
 
-    .mover-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.875rem;
+    /* ── News grid ── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin-bottom: 2.5rem;
     }
 
-    .mover-row:last-child { border-bottom: none; }
-
-    .mover-ticker { font-weight: 700; font-family: monospace; color: var(--text); }
-    .mover-name   { font-size: 0.75rem; color: var(--muted); }
-    .mover-price  { font-family: monospace; font-size: 0.85rem; color: var(--text); }
-    .mover-chg    { font-family: monospace; font-size: 0.85rem; font-weight: 600; }
-    .mover-chg.up   { color: var(--green); }
-    .mover-chg.down { color: var(--red); }
-
-    /* ── Sector movers ── */
-    .sector-tabs {
-      display: flex;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
+    @media (max-width: 640px) {
+      .news-grid { grid-template-columns: repeat(2, 1fr); }
     }
-
-    .stab {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.8rem;
-      padding: 0.3rem 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .stab.active, .stab:hover { color: var(--text); border-color: var(--blue); }
-    .stab.active { background: var(--blue); color: #0d1117; border-color: var(--blue); }
-
-    .spanel { display: none; }
-    .spanel.active { display: block; }
-
-    /* ── News ── */
-    .news-tabs {
-      display: flex;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
-    }
-
-    .ntab {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.8rem;
-      padding: 0.3rem 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .ntab.active, .ntab:hover { color: var(--text); border-color: var(--blue); }
-    .ntab.active { background: var(--blue); color: #0d1117; border-color: var(--blue); }
-
-    .npanel { display: none; }
-    .npanel.active { display: grid; gap: 0.5rem; }
 
     .news-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
       display: block;
-      padding: 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
       text-decoration: none;
-      transition: border-color 0.15s;
+      background: #efefef;
     }
 
-    .news-card:hover { border-color: var(--blue); }
-
-    .news-title {
-      font-size: 0.875rem;
-      color: var(--text);
-      font-weight: 500;
-      line-height: 1.4;
+    .news-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
     }
 
-    .news-meta {
-      margin-top: 0.3rem;
+    .news-card:hover img { transform: scale(1.04); }
+
+    /* Gradient placeholder when no image */
+    .news-card .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .placeholder.energy  { background: linear-gradient(135deg, #f0a500, #e07b00); }
+    .placeholder.bio     { background: linear-gradient(135deg, #1a7f37, #2da44e); }
+    .placeholder.ai      { background: linear-gradient(135deg, #6e40c9, #9a6dd7); }
+
+    .placeholder .pticker {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.9);
+      font-family: monospace;
+    }
+
+    .placeholder .ptitle {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.4rem;
+      line-height: 1.35;
+    }
+
+    /* Hover overlay */
+    .news-card .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      display: flex;
+      align-items: flex-end;
+      transition: background 0.25s;
+    }
+
+    .news-card:hover .overlay { background: rgba(0,0,0,0.45); }
+
+    .overlay-text {
+      padding: 0.75rem;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .news-card:hover .overlay-text { opacity: 1; }
+
+    .overlay-title {
       font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .overlay-meta {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.25rem;
+    }
+
+    /* ── Stocks strip ── */
+    .stocks-strip {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2.5rem;
+      scrollbar-width: none;
+    }
+
+    .stocks-strip::-webkit-scrollbar { display: none; }
+
+    .stock-pill {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.9rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      min-width: 130px;
+    }
+
+    .stock-pill .sp-ticker {
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .stock-pill .sp-name {
+      font-size: 0.65rem;
       color: var(--muted);
     }
+
+    .stock-pill .sp-right { margin-left: auto; text-align: right; }
+
+    .stock-pill .sp-price {
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .stock-pill .sp-chg {
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    .sp-chg.up   { color: var(--green); }
+    .sp-chg.down { color: var(--red); }
 
     /* ── Disclaimer ── */
-    #disclaimer p {
-      font-size: 0.82rem;
+    .disclaimer {
+      max-width: 935px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+      font-size: 0.75rem;
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.6;
+      text-align: center;
     }
-
-    .loading { font-size: 0.85rem; color: var(--muted); }
 
     footer {
       text-align: center;
-      padding: 1.5rem;
-      font-size: 0.78rem;
+      padding: 1.25rem;
+      font-size: 0.75rem;
       color: var(--muted);
       border-top: 1px solid var(--border);
     }
+
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Mysoresearch</h1>
-  <p>US Emerging Trends — Energy · Biosciences · AI</p>
-</header>
+<!-- Top bar -->
+<div class="topbar">
+  <h1>mysoresearch</h1>
+  <span class="updated" id="updated-at"></span>
+</div>
 
-<nav>
-  <a href="#sectors">By Sector</a>
-  <a href="#news">News</a>
-  <a href="#disclaimer">Disclaimer</a>
-</nav>
+<!-- Stories / sector selector -->
+<div class="stories-wrap">
+  <div class="stories">
+    <button class="story" onclick="setActive('All')" id="story-All">
+      <div class="story-ring active"><div class="story-inner">&#127758;</div></div>
+      <span>All</span>
+    </button>
+    <button class="story" onclick="setActive('Energy')" id="story-Energy">
+      <div class="story-ring inactive"><div class="story-inner">&#9762;</div></div>
+      <span>Energy</span>
+    </button>
+    <button class="story" onclick="setActive('Biosciences')" id="story-Biosciences">
+      <div class="story-ring inactive"><div class="story-inner">&#129516;</div></div>
+      <span>Biosciences</span>
+    </button>
+    <button class="story" onclick="setActive('AI')" id="story-AI">
+      <div class="story-ring inactive"><div class="story-inner">&#129504;</div></div>
+      <span>AI</span>
+    </button>
+  </div>
+</div>
 
-<main>
+<!-- Main feed -->
+<div class="feed" id="feed">
+  <p style="color:#8e8e8e;font-size:.85rem;padding:2rem 0 0;text-align:center">Loading...</p>
+</div>
 
-  <!-- By Sector -->
-  <section id="sectors">
-    <h2>By Sector</h2>
-    <div class="sector-tabs">
-      <button class="stab active" data-s="Energy"      onclick="switchSector(this)">Energy</button>
-      <button class="stab"        data-s="Biosciences" onclick="switchSector(this)">Biosciences</button>
-      <button class="stab"        data-s="AI"          onclick="switchSector(this)">AI</button>
-    </div>
-    <div id="sector-panels"></div>
-  </section>
+<div class="disclaimer">
+  For educational and informational purposes only. Not financial advice. Investing involves risk.
+  Always consult a licensed financial advisor before making investment decisions.
+</div>
 
-  <!-- News -->
-  <section id="news">
-    <h2>Latest News</h2>
-    <div class="news-tabs">
-      <button class="ntab active" data-n="Energy"      onclick="switchNews(this)">Energy</button>
-      <button class="ntab"        data-n="Biosciences" onclick="switchNews(this)">Biosciences</button>
-      <button class="ntab"        data-n="AI"          onclick="switchNews(this)">AI</button>
-    </div>
-    <div id="news-panels"><p class="loading">Loading news...</p></div>
-  </section>
-
-  <!-- Disclaimer -->
-  <section id="disclaimer">
-    <h2>Disclaimer</h2>
-    <p>All content is for educational and informational purposes only. Nothing here constitutes financial advice or a recommendation to buy or sell any security. Investing involves risk, including possible loss of principal. Always consult a licensed financial advisor before making investment decisions.</p>
-  </section>
-
-</main>
-
-<footer>&copy; 2026 Mysoresearch &mdash; For educational use only</footer>
+<footer>&copy; 2026 Mysoresearch</footer>
 
 <script>
-  let marketData = {};
+  let DATA = {};
+  const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
+  let activeSector = 'All';
 
-  function fmt(v)   { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
-  function cls(v)   { return v >= 0 ? 'up' : 'down'; }
+  function fmt(v)  { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+  function cls(v)  { return v >= 0 ? 'up' : 'down'; }
 
-  function moverRow(s) {
-    return `<div class="mover-row">
+  function stockPill(s) {
+    return `<div class="stock-pill">
       <div>
-        <div class="mover-ticker">${s.ticker}</div>
-        <div class="mover-name">${s.name}</div>
+        <div class="sp-ticker">${s.ticker}</div>
+        <div class="sp-name">${s.name}</div>
       </div>
-      <div style="text-align:right">
-        <div class="mover-price">$${s.close.toFixed(2)}</div>
-        <div class="mover-chg ${cls(s.change)}">${fmt(s.change)}</div>
+      <div class="sp-right">
+        <div class="sp-price">$${s.close.toFixed(2)}</div>
+        <div class="sp-chg ${cls(s.change)}">${fmt(s.change)}</div>
       </div>
     </div>`;
   }
 
-  function renderSectorPanels(sectors) {
-    const html = Object.entries(sectors).map(([name, stocks]) =>
-      `<div class="spanel" data-sp="${name}">
-        ${stocks.map(moverRow).join('')}
-      </div>`
+  function newsCard(a) {
+    const sc = SECTOR_CLASS[a.sector] || 'ai';
+    const img = a.thumbnail
+      ? `<img src="${a.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+      : '';
+    const placeholder = `<div class="placeholder ${sc}" ${a.thumbnail ? 'style="display:none"' : ''}>
+        <div class="pticker">${a.ticker}</div>
+        <div class="ptitle">${a.title.slice(0, 60)}${a.title.length > 60 ? '…' : ''}</div>
+      </div>`;
+    return `<a class="news-card" href="${a.url}" target="_blank" rel="noopener">
+      ${img}${placeholder}
+      <div class="overlay">
+        <div class="overlay-text">
+          <div class="overlay-title">${a.title}</div>
+          <div class="overlay-meta">${a.publisher}${a.published ? ' · ' + a.published : ''}</div>
+        </div>
+      </div>
+    </a>`;
+  }
+
+  function sectorBlock(sector, stocks, articles) {
+    const stocksHtml = stocks.length
+      ? `<div class="stocks-strip">${stocks.map(stockPill).join('')}</div>`
+      : '';
+    const newsHtml = articles.length
+      ? `<div class="news-grid">${articles.map(newsCard).join('')}</div>`
+      : '';
+    return `<div class="section-label">${sector}</div>${stocksHtml}${newsHtml}`;
+  }
+
+  function render() {
+    if (!DATA.sectors) return;
+    const sectors = activeSector === 'All'
+      ? Object.keys(DATA.sectors)
+      : [activeSector];
+
+    document.getElementById('feed').innerHTML = sectors.map(s =>
+      sectorBlock(s, DATA.sectors[s] || [], (DATA.news || {})[s] || [])
     ).join('');
-    document.getElementById('sector-panels').innerHTML = html;
-    document.querySelector('.spanel').classList.add('active');
   }
 
-  function switchSector(btn) {
-    document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.spanel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelector(`.spanel[data-sp="${btn.dataset.s}"]`)?.classList.add('active');
-  }
-
-  function renderNewsPanels(news) {
-    const html = Object.entries(news).map(([sector, articles]) =>
-      `<div class="npanel" data-np="${sector}">
-        ${articles.length
-          ? articles.map(a => `
-              <a class="news-card" href="${a.url}" target="_blank" rel="noopener">
-                <div class="news-title">${a.title}</div>
-                <div class="news-meta">${a.publisher}${a.published ? ' · ' + a.published : ''}</div>
-              </a>`).join('')
-          : '<p class="loading">No articles yet.</p>'}
-      </div>`
-    ).join('');
-    document.getElementById('news-panels').innerHTML = html;
-    document.querySelector('.npanel').classList.add('active');
-  }
-
-  function switchNews(btn) {
-    document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.npanel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelector(`.npanel[data-np="${btn.dataset.n}"]`)?.classList.add('active');
+  function setActive(sector) {
+    activeSector = sector;
+    document.querySelectorAll('.story').forEach(el => {
+      const ring = el.querySelector('.story-ring');
+      if (el.id === 'story-' + sector) {
+        ring.className = 'story-ring' + (sector === 'All' ? ' active' : ' active');
+      } else {
+        ring.className = 'story-ring inactive';
+      }
+    });
+    render();
   }
 
   fetch('data/market_data.json')
     .then(r => r.json())
     .then(data => {
-      marketData = data;
-      if (data.sectors) renderSectorPanels(data.sectors);
-      if (data.news)    renderNewsPanels(data.news);
+      DATA = data;
+      document.getElementById('updated-at').textContent = data.updated_at;
+      render();
     })
     .catch(() => {
-      document.getElementById('updated-at').textContent = '';
-      document.getElementById('movers-grid').innerHTML =
-        '<p class="loading">Unable to load data.</p>';
+      document.getElementById('feed').innerHTML =
+        '<p style="color:#8e8e8e;text-align:center;padding:2rem">Unable to load data.</p>';
     });
 </script>
 
