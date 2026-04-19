@@ -4,13 +4,10 @@ on:
   schedule:
     # 13:00 UTC = 8:00 AM EST / 9:00 AM EDT — before US market open (9:30 AM ET)
     - cron: '0 13 * * 1-5'
-  workflow_dispatch: # allow manual trigger from GitHub Actions UI
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
-  fetch-and-commit:
+  fetch-and-store:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,15 +20,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance
+        run: pip install yfinance requests
 
-      - name: Fetch market data
+      - name: Fetch and push to Upstash
+        env:
+          UPSTASH_REDIS_REST_URL:   ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
         run: python scripts/fetch_data.py
-
-      - name: Commit updated data
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/market_data.json
-          git diff --cached --quiet || git commit -m "chore: daily market data update $(date -u '+%Y-%m-%d')"
-          git push

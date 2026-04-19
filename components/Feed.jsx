@@ -24,7 +24,7 @@ export default function Feed() {
   const [error, setError]     = useState(null);
 
   useEffect(() => {
-    fetch('/market_data.json')
+    fetch('/api/market')
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

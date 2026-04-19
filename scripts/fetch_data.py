@@ -1,55 +1,45 @@
 """
-Fetches previous trading day data and Yahoo Finance news via yfinance.
-Outputs data/market_data.json consumed by index.html.
+Fetches market data via yfinance and stores it in Upstash Redis.
+Runs daily via GitHub Actions before US market open.
 """
 
 import json
+import os
 import datetime
+import requests
 import yfinance as yf
 
 SECTORS = {
-    "Energy": [
-        {"ticker": "CCJ",  "name": "Cameco"},
-        {"ticker": "CEG",  "name": "Constellation Energy"},
-        {"ticker": "VST",  "name": "Vistra"},
-        {"ticker": "SMR",  "name": "NuScale Power"},
-        {"ticker": "OKLO", "name": "Oklo"},
-        {"ticker": "UEC",  "name": "Uranium Energy"},
-        {"ticker": "NLR",  "name": "NLR ETF (Nuclear)"},
-        {"ticker": "URA",  "name": "URA ETF (Uranium)"},
-    ],
-    "Biosciences": [
-        {"ticker": "LLY",  "name": "Eli Lilly"},
-        {"ticker": "VRTX", "name": "Vertex Pharma"},
-        {"ticker": "REGN", "name": "Regeneron"},
-        {"ticker": "MRNA", "name": "Moderna"},
-        {"ticker": "NTLA", "name": "Intellia Therapeutics"},
-        {"ticker": "CRSP", "name": "CRISPR Therapeutics"},
-        {"ticker": "BIIB", "name": "Biogen"},
-        {"ticker": "XBI",  "name": "XBI ETF (Biotech)"},
-    ],
-    "AI": [
-        {"ticker": "NVDA", "name": "Nvidia"},
-        {"ticker": "MSFT", "name": "Microsoft"},
-        {"ticker": "GOOGL","name": "Alphabet"},
-        {"ticker": "AMD",  "name": "AMD"},
-        {"ticker": "IONQ", "name": "IonQ (Quantum)"},
-        {"ticker": "RGTI", "name": "Rigetti (Quantum)"},
-        {"ticker": "SMCI", "name": "Super Micro"},
-        {"ticker": "SOXL", "name": "SOXL ETF (Semis)"},
-    ],
+    "Energy": {
+        "tickers": ["CCJ", "CEG", "VST", "SMR", "OKLO", "UEC", "NLR", "URA"],
+        "names": {
+            "CCJ": "Cameco", "CEG": "Constellation Energy", "VST": "Vistra",
+            "SMR": "NuScale Power", "OKLO": "Oklo", "UEC": "Uranium Energy",
+            "NLR": "NLR ETF", "URA": "URA ETF",
+        },
+        "news_tickers": ["CCJ", "CEG", "SMR", "OKLO"],
+    },
+    "Biosciences": {
+        "tickers": ["LLY", "VRTX", "REGN", "MRNA", "CRSP", "BIIB", "XBI"],
+        "names": {
+            "LLY": "Eli Lilly", "VRTX": "Vertex Pharma", "REGN": "Regeneron",
+            "MRNA": "Moderna", "CRSP": "CRISPR Therapeutics",
+            "BIIB": "Biogen", "XBI": "XBI ETF",
+        },
+        "news_tickers": ["LLY", "VRTX", "MRNA", "CRSP"],
+    },
+    "AI": {
+        "tickers": ["NVDA", "MSFT", "GOOGL", "AMD", "IONQ", "RGTI", "SMCI"],
+        "names": {
+            "NVDA": "Nvidia", "MSFT": "Microsoft", "GOOGL": "Alphabet",
+            "AMD": "AMD", "IONQ": "IonQ", "RGTI": "Rigetti", "SMCI": "Super Micro",
+        },
+        "news_tickers": ["NVDA", "MSFT", "IONQ", "AMD"],
+    },
 }
 
-NEWS_TICKERS = {
-    "Energy":      ["CCJ", "CEG", "SMR", "OKLO", "UEC"],
-    "Biosciences": ["LLY", "VRTX", "MRNA", "CRSP", "NTLA"],
-    "AI":          ["NVDA", "MSFT", "IONQ", "AMD", "GOOGL"],
-}
 
-NEWS_PER_SECTOR = 9  # 3x3 grid per sector
-
-
-def fetch_stock(ticker):
+def fetch_quote(ticker, name):
     try:
         hist = yf.Ticker(ticker).history(period="5d")
         if len(hist) < 2:
@@ -59,50 +49,42 @@ def fetch_stock(ticker):
         pct   = ((close["Close"] - prev["Close"]) / prev["Close"]) * 100
         return {
             "ticker": ticker,
-            "close":  round(close["Close"], 2),
-            "change": round(pct, 2),
+            "name":   name,
+            "close":  round(float(close["Close"]), 2),
+            "change": round(float(pct), 2),
             "volume": int(close["Volume"]),
         }
     except Exception:
         return None
 
 
-def get_thumbnail(content):
-    # Try nested resolutions array
-    try:
-        resolutions = content.get("thumbnail", {}).get("resolutions", [])
-        if resolutions:
-            return resolutions[0].get("url", "")
-    except Exception:
-        pass
-    # Try top-level thumbnail in content wrapper
-    try:
-        resolutions = (content.get("content", {}) or {}).get("thumbnail", {}).get("resolutions", [])
-        if resolutions:
-            return resolutions[0].get("url", "")
-    except Exception:
-        pass
-    return ""
-
-
-def fetch_news(sector, tickers):
-    seen_urls = set()
-    articles  = []
-
+def fetch_news(tickers, max_articles=9):
+    seen = set()
+    articles = []
     for ticker in tickers:
+        if len(articles) >= max_articles:
+            break
         try:
             raw = yf.Ticker(ticker).news or []
             for item in raw:
+                if len(articles) >= max_articles:
+                    break
                 content = item.get("content", item)
-                url     = (content.get("canonicalUrl") or {}).get("url") or content.get("url", "")
-                title   = content.get("title", "")
-                pub     = (content.get("provider") or {}).get("displayName") or content.get("publisher", "")
-                ts      = content.get("pubDate") or content.get("providerPublishTime")
-                thumb   = get_thumbnail(item)
+                url   = (content.get("canonicalUrl") or {}).get("url") or content.get("url", "")
+                title = content.get("title", "")
+                pub   = (content.get("provider") or {}).get("displayName") or content.get("publisher", "")
+                ts    = content.get("pubDate") or content.get("providerPublishTime")
+                thumb = ""
+                try:
+                    resolutions = content.get("thumbnail", {}).get("resolutions", [])
+                    if resolutions:
+                        thumb = resolutions[0].get("url", "")
+                except Exception:
+                    pass
 
-                if not url or not title or url in seen_urls:
+                if not url or not title or url in seen:
                     continue
-                seen_urls.add(url)
+                seen.add(url)
 
                 if isinstance(ts, (int, float)):
                     published = datetime.datetime.utcfromtimestamp(ts).strftime("%b %d, %Y")
@@ -115,54 +97,51 @@ def fetch_news(sector, tickers):
                     published = ""
 
                 articles.append({
-                    "title":     title,
-                    "url":       url,
-                    "publisher": pub,
-                    "published": published,
-                    "ticker":    ticker,
-                    "sector":    sector,
-                    "thumbnail": thumb,
+                    "title": title, "url": url, "publisher": pub,
+                    "published": published, "ticker": ticker, "thumbnail": thumb,
                 })
-
-                if len(articles) >= NEWS_PER_SECTOR:
-                    return articles
         except Exception:
             continue
-
     return articles
 
 
+def push_to_upstash(data):
+    url   = os.environ["UPSTASH_REDIS_REST_URL"]
+    token = os.environ["UPSTASH_REDIS_REST_TOKEN"]
+    payload = json.dumps(data)
+    # SET with 28-hour expiry (covers weekends)
+    res = requests.post(
+        f"{url}/set/market_data/ex/100800",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        data=json.dumps(payload),
+    )
+    res.raise_for_status()
+    print(f"Upstash write: {res.json()}")
+
+
 def main():
-    all_stocks  = []
     sector_data = {}
+    news_data   = {}
 
-    for sector, stocks in SECTORS.items():
-        results = []
-        for s in stocks:
-            data = fetch_stock(s["ticker"])
-            if data:
-                data["name"]   = s["name"]
-                data["sector"] = sector
-                results.append(data)
-                all_stocks.append(data)
-        results.sort(key=lambda x: x["change"], reverse=True)
-        sector_data[sector] = results
-
-    sector_news = {}
-    for sector, tickers in NEWS_TICKERS.items():
-        sector_news[sector] = fetch_news(sector, tickers)
-        print(f"News [{sector}]: {len(sector_news[sector])} articles")
+    for sector, cfg in SECTORS.items():
+        quotes = []
+        for ticker in cfg["tickers"]:
+            q = fetch_quote(ticker, cfg["names"][ticker])
+            if q:
+                quotes.append(q)
+        quotes.sort(key=lambda x: x["change"], reverse=True)
+        sector_data[sector] = quotes
+        news_data[sector]   = fetch_news(cfg["news_tickers"])
+        print(f"{sector}: {len(quotes)} quotes, {len(news_data[sector])} articles")
 
     output = {
-        "updated_at": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
-        "sectors":    sector_data,
-        "news":       sector_news,
+        "updatedAt": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "sectors":   sector_data,
+        "news":      news_data,
     }
 
-    with open("public/market_data.json", "w") as f:
-        json.dump(output, f, indent=2)
-
-    print(f"Done — {len(all_stocks)} stocks fetched.")
+    push_to_upstash(output)
+    print("Done.")
 
 
 if __name__ == "__main__":
