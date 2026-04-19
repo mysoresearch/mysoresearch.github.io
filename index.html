@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mysore Research</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2c5f8a;
+      --accent: #e07b39;
+      --bg: #f8f9fb;
+      --text: #1e2a38;
+      --muted: #6b7a8d;
+      --card-bg: #ffffff;
+      --border: #dde3ea;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 3.5rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header p.tagline {
+      margin-top: 0.75rem;
+      font-size: 1.1rem;
+      opacity: 0.85;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: #1e3f5c;
+      display: flex;
+      justify-content: center;
+      gap: 0.25rem;
+      padding: 0.5rem 1rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #c9dcea;
+      text-decoration: none;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 960px;
+      margin: 2.5rem auto;
+      padding: 0 1.25rem;
+      display: grid;
+      gap: 2rem;
+    }
+
+    /* ── Section cards ── */
+    section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem 2.25rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    section h2 {
+      font-size: 1.25rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section h2 .icon { font-size: 1.1rem; }
+
+    /* ── About ── */
+    #about p { color: #3a4a5c; }
+
+    /* ── Research areas ── */
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    .area-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+    }
+
+    .area-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .area-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ── Projects ── */
+    .project-list { list-style: none; display: grid; gap: 0.75rem; }
+
+    .project-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .project-list .dot {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-top: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .project-list strong { font-size: 0.95rem; color: var(--text); }
+    .project-list p { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── Contact ── */
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .contact-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .contact-links a:hover { background: #1e3f5c; }
+    .contact-links a.secondary {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+    .contact-links a.secondary:hover { background: var(--primary); color: #fff; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.9rem; }
+      section { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Mysore Research</h1>
+    <p class="tagline">Exploring ideas through rigorous inquiry and open collaboration</p>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#research">Research Areas</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <main>
+
+    <!-- About -->
+    <section id="about">
+      <h2><span class="icon">&#128269;</span> About</h2>
+      <p>
+        Welcome to Mysore Research — a hub for open exploration across technology,
+        data, and systems thinking. This site documents ongoing projects, published
+        findings, and collaborative work. Whether you're a fellow researcher, a
+        practitioner, or simply curious, you're in the right place.
+      </p>
+    </section>
+
+    <!-- Research Areas -->
+    <section id="research">
+      <h2><span class="icon">&#128300;</span> Research Areas</h2>
+      <div class="area-grid">
+        <div class="area-card">
+          <h3>Data Systems</h3>
+          <p>Scalable architectures for storage, retrieval, and analysis.</p>
+        </div>
+        <div class="area-card">
+          <h3>Machine Learning</h3>
+          <p>Applied ML models, evaluation, and interpretability.</p>
+        </div>
+        <div class="area-card">
+          <h3>Open Source</h3>
+          <p>Building and contributing to open, community-driven tools.</p>
+        </div>
+        <div class="area-card">
+          <h3>Knowledge Systems</h3>
+          <p>Organizing and surfacing information for human understanding.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <h2><span class="icon">&#128196;</span> Projects</h2>
+      <ul class="project-list">
+        <li>
+          <span class="dot"></span>
+          <div>
+            <strong>mysoresearch.github.io</strong>
+            <p>This site — a living record of research, notes, and findings.</p>
+          </div>
+        </li>
+        <li>
+          <span class="dot"></span>
+          <div>
+            <strong>More projects coming soon</strong>
+            <p>Active work is being documented and will be published here.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2><span class="icon">&#9993;</span> Contact</h2>
+      <p>Interested in collaborating or have questions about the work?</p>
+      <div class="contact-links">
+        <a href="https://github.com/mysoresearch" target="_blank" rel="noopener">
+          &#128257; GitHub
+        </a>
+        <a href="mailto:contact@mysoresearch.example.com" class="secondary">
+          &#128140; Email
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 Mysore Research &mdash; Built with GitHub Pages
+  </footer>
+
+</body>
+</html>
