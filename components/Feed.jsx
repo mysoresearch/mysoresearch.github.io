@@ -3,21 +3,16 @@
 import { useState, useEffect } from 'react';
 
 const SECTORS = ['Energy', 'Biosciences', 'AI'];
-
-const STORY_CONFIG = {
-  All:         { icon: '🌍' },
-  Energy:      { icon: '⚛️' },
-  Biosciences: { icon: '🧬' },
-  AI:          { icon: '🧠' },
-};
+const SECTOR_CLASS = { Energy: 'energy', Biosciences: 'bio', AI: 'ai' };
 
 const GRADIENTS = {
-  Energy:      'linear-gradient(135deg, #f0a500, #c47d00)',
-  Biosciences: 'linear-gradient(135deg, #1a7f37, #2da44e)',
-  AI:          'linear-gradient(135deg, #6e40c9, #9a6dd7)',
+  Energy:      'linear-gradient(135deg, #f0a500 0%, #c47d00 100%)',
+  Biosciences: 'linear-gradient(135deg, #1a7f37 0%, #2da44e 100%)',
+  AI:          'linear-gradient(135deg, #6e40c9 0%, #9a6dd7 100%)',
 };
 
 export default function Feed() {
+  const [tab, setTab]         = useState('news');
   const [active, setActive]   = useState('All');
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,153 +20,158 @@ export default function Feed() {
 
   useEffect(() => {
     fetch('/api/market')
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(d => { setData(d); setLoading(false); })
       .catch(e => { setError(e.message); setLoading(false); });
   }, []);
 
   const visibleSectors = active === 'All' ? SECTORS : [active];
 
+  const reels = data
+    ? visibleSectors.flatMap(sector =>
+        (data.news?.[sector] ?? []).map(a => ({ ...a, sector }))
+      )
+    : [];
+
   return (
-    <>
+    <div className="app">
       {/* Top bar */}
       <header className="topbar">
         <h1 className="logo">mysoresearch</h1>
-        <span className="topbar-sub">
-          {data
-            ? `Updated ${new Date(data.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
-            : 'US Emerging Trends'}
-        </span>
-      </header>
-
-      {/* Stories / sector filter */}
-      <div className="stories-wrap">
-        <div className="stories">
-          {Object.entries(STORY_CONFIG).map(([sector, cfg]) => (
+        <div className="sector-pills">
+          {['All', ...SECTORS].map(s => (
             <button
-              key={sector}
-              className="story-btn"
-              onClick={() => setActive(sector)}
+              key={s}
+              className={`sector-pill${active === s ? ' active' : ''}${active === s && SECTOR_CLASS[s] ? ' ' + SECTOR_CLASS[s] : ''}`}
+              onClick={() => setActive(s)}
             >
-              <div className={`story-ring ${active === sector ? 'ring-active' : ''}`}>
-                <div className="story-inner">{cfg.icon}</div>
-              </div>
-              <span>{sector}</span>
+              {s}
             </button>
           ))}
         </div>
-      </div>
+      </header>
 
-      {/* Feed */}
-      <main className="feed">
-        {loading && (
-          <p style={{ textAlign: 'center', color: '#8e8e8e', padding: '3rem' }}>
-            Loading market data…
-          </p>
-        )}
-
-        {error && (
-          <p style={{ textAlign: 'center', color: '#d93025', padding: '3rem' }}>
-            Failed to load data: {error}
-          </p>
-        )}
-
-        {data && visibleSectors.map(sector => (
-          <SectorSection
-            key={sector}
-            sector={sector}
-            stocks={data.sectors?.[sector] ?? []}
-            articles={data.news?.[sector] ?? []}
-          />
-        ))}
-      </main>
-
-      <p className="disclaimer">
-        For educational and informational purposes only. Not financial advice.
-        Investing involves risk. Consult a licensed financial advisor before making investment decisions.
-      </p>
-
-      <footer>&copy; {new Date().getFullYear()} Mysoresearch</footer>
-    </>
-  );
-}
-
-function SectorSection({ sector, stocks, articles }) {
-  return (
-    <section className="sector-section">
-      <p className="section-label">{sector}</p>
-
-      {stocks.length > 0 && (
-        <div className="stocks-strip">
-          {stocks.map(s => <StockPill key={s.ticker} stock={s} />)}
-        </div>
+      {/* News reels */}
+      {tab === 'news' && (
+        loading ? (
+          <div className="full-center">Loading market data…</div>
+        ) : error ? (
+          <div className="full-center" style={{ color: '#f85149' }}>
+            Failed to load: {error}
+          </div>
+        ) : reels.length === 0 ? (
+          <div className="full-center">No articles available.</div>
+        ) : (
+          <div className="reels-wrap">
+            {reels.map((article, i) => (
+              <ReelCard key={i} article={article} />
+            ))}
+          </div>
+        )
       )}
 
-      {articles.length > 0 && (
-        <div className="news-grid">
-          {articles.map((a, i) => (
-            <NewsCard key={i} article={a} sector={sector} />
+      {/* Stocks list */}
+      {tab === 'stocks' && (
+        <div className="stocks-wrap">
+          {loading && <div className="full-center">Loading…</div>}
+          {error   && <div className="full-center" style={{ color: '#f85149' }}>Failed: {error}</div>}
+          {data && visibleSectors.map(sector => (
+            <StockGroup key={sector} sector={sector} stocks={data.sectors?.[sector] ?? []} />
           ))}
+          <p className="disclaimer">
+            For educational purposes only. Not financial advice. Consult a licensed financial advisor.
+          </p>
         </div>
       )}
 
-      {stocks.length === 0 && articles.length === 0 && (
-        <p style={{ color: '#8e8e8e', fontSize: '0.85rem', padding: '1rem 0' }}>
-          No data available.
-        </p>
-      )}
-    </section>
+      {/* Bottom tab bar */}
+      <nav className="tabbar">
+        <button className={`tab-btn${tab === 'news' ? ' active' : ''}`} onClick={() => setTab('news')}>
+          <span className="tab-icon">📰</span>
+          News
+        </button>
+        <button className={`tab-btn${tab === 'stocks' ? ' active' : ''}`} onClick={() => setTab('stocks')}>
+          <span className="tab-icon">📈</span>
+          Stocks
+        </button>
+      </nav>
+    </div>
   );
 }
 
-function StockPill({ stock }) {
-  const up = stock.change >= 0;
+function ReelCard({ article }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const sectorClass = SECTOR_CLASS[article.sector] ?? '';
+
   return (
-    <div className="stock-pill">
-      <div>
-        <div className="sp-ticker">{stock.ticker}</div>
-        <div className="sp-name">{stock.name}</div>
+    <div className="reel">
+      {article.thumbnail && !imgFailed ? (
+        <img
+          className="reel-bg"
+          src={article.thumbnail}
+          alt=""
+          loading="lazy"
+          onError={() => setImgFailed(true)}
+        />
+      ) : (
+        <div className="reel-placeholder" style={{ background: GRADIENTS[article.sector] }}>
+          {article.title}
+        </div>
+      )}
+
+      <div className="reel-gradient" />
+
+      <div className="reel-content">
+        <span className={`reel-sector ${sectorClass}`}>{article.sector}</span>
+        <p className="reel-title">{article.title}</p>
+        <p className="reel-meta">
+          {article.publisher}{article.published ? ` · ${article.published}` : ''}
+        </p>
+        {article.url && (
+          <a className="reel-link" href={article.url} target="_blank" rel="noopener noreferrer">
+            Read article ↗
+          </a>
+        )}
       </div>
-      <div className="sp-right">
-        <div className="sp-price">${stock.close.toFixed(2)}</div>
-        <div className={`sp-chg ${up ? 'up' : 'down'}`}>
-          {up ? '+' : ''}{stock.change.toFixed(2)}%
+
+      <div className="reel-actions">
+        <div className="reel-action">
+          <span className="icon">🔖</span>
+          <span>Save</span>
+        </div>
+        <div className="reel-action">
+          <span className="icon">↗</span>
+          <span>Share</span>
         </div>
       </div>
     </div>
   );
 }
 
-function NewsCard({ article, sector }) {
-  const [imgFailed, setImgFailed] = useState(false);
-
+function StockGroup({ sector, stocks }) {
+  if (stocks.length === 0) return null;
   return (
-    <a className="news-card" href={article.url} target="_blank" rel="noopener noreferrer">
-      <div className="nc-image-wrap">
-        {article.thumbnail && !imgFailed ? (
-          <img
-            src={article.thumbnail}
-            alt=""
-            loading="lazy"
-            onError={() => setImgFailed(true)}
-          />
-        ) : (
-          <div className="nc-placeholder" style={{ background: GRADIENTS[sector] }}>
-            <p>{article.title.slice(0, 70)}{article.title.length > 70 ? '…' : ''}</p>
-          </div>
-        )}
-        <div className="nc-overlay">
-          <div className="nc-overlay-text">
-            <div className="nc-overlay-title">{article.title}</div>
-            <div className="nc-overlay-meta">
-              {article.publisher}{article.published ? ` · ${article.published}` : ''}
-            </div>
-          </div>
+    <div className="sector-group">
+      <p className="sector-heading">{sector}</p>
+      {stocks.map(s => <StockRow key={s.ticker} stock={s} />)}
+    </div>
+  );
+}
+
+function StockRow({ stock }) {
+  const up = stock.change >= 0;
+  return (
+    <div className="stock-row">
+      <div className="sr-left">
+        <div className="sr-ticker">{stock.ticker}</div>
+        <div className="sr-name">{stock.name}</div>
+      </div>
+      <div className="sr-right">
+        <div className="sr-price">${stock.close.toFixed(2)}</div>
+        <div className={`sr-chg ${up ? 'up' : 'down'}`}>
+          {up ? '+' : ''}{stock.change.toFixed(2)}%
         </div>
       </div>
-    </a>
+    </div>
   );
 }
